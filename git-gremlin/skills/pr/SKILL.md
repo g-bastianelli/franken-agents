@@ -1,13 +1,13 @@
 ---
 name: pr
-description: Draft, publish, and create a confirmed GitHub pull request from branch history. Not for commits, status/diff/log, push-only, rebase, or non-GitHub merge requests.
+description: Publish the branch and open a draft GitHub pull request from branch history, or push to the branch's open PR. Use automatically after the commit that closes a finished task on a feature branch. Not for commits, status/diff/log, push-only, rebase, or non-GitHub merge requests.
 effort: medium
-allowed-tools: Bash(git log:*), Bash(git branch:*), Bash(git diff:*), Bash(git rev-parse:*), Bash(git remote:*), Bash(git config:*), Bash(git push:*), Bash(gh auth status:*), Bash(gh repo view:*), Bash(gh pr create:*), Read
+allowed-tools: Bash(git log:*), Bash(git branch:*), Bash(git diff:*), Bash(git rev-parse:*), Bash(git remote:*), Bash(git config:*), Bash(git push:*), Bash(gh auth status:*), Bash(gh repo view:*), Bash(gh pr view:*), Bash(gh pr create:*), Read
 ---
 
 # git-gremlin:pr
 
-Draft, publish, create. Match the user's language; keep technical identifiers unchanged.
+Draft, publish, open as draft. Match the user's language; keep technical identifiers unchanged.
 
 ## Voice
 
@@ -29,6 +29,9 @@ Read `../../persona.md`; it is canonical for this skill's user-facing output, an
    - Stop on a detached `HEAD`, when the current branch is the base branch, or when no
      commits exist ahead of the base.
    - Capture the current branch and `HEAD_OID = git rev-parse HEAD`.
+   - Run `gh pr view "<BRANCH>" --json url,state`. When it reports an `OPEN` PR, this run
+     only publishes new commits to it: skip steps 2–3, then push, verify, and report that
+     PR's URL instead of creating one.
    - If an authoritative spec or issue Acceptance is available in the delivery context
      or `docs/acid-prophet/specs/`, resolve the applicable source and run the checkpoint
      below before drafting. An ambiguous source needs clarification. No source means
@@ -50,28 +53,22 @@ Read `../../persona.md`; it is canonical for this skill's user-facing output, an
    scope from the commits. Draft a body with `## Summary` and one to three bullets, then
    `## Test plan` with a checklist, then `Closes <id>` on its own line when one unambiguous
    Linear id was detected. Do not invent changes or verification absent from the inputs.
-3. If the user asked only for PR text, display it and stop. Otherwise display the title,
-   body, and `<branch> → <base>`, then wait for confirmation or edits. This is the only
-   extra approval gate.
-4. After confirmation, verify that the branch and `HEAD_OID` still match the proposal. If they
-   changed, regenerate it and ask again.
-   Revalidate drift report inputs too: base, source (including remote Acceptance when used),
-   recorded decisions, relevant worktree changes, and intended scope. Refresh affected
-   comparisons if any changed during the approval wait; unresolved findings stop publication.
-   If that changes the PR proposal, present the updated proposal for approval.
-5. Resolve the push remote in this order: `branch.<BRANCH>.pushRemote`,
+3. If the user asked only for PR text, display it and stop. Otherwise proceed without a
+   confirmation gate: the PR is always opened as a draft, and the user marks it ready for
+   review on GitHub.
+4. Resolve the push remote in this order: `branch.<BRANCH>.pushRemote`,
    `remote.pushDefault`, `branch.<BRANCH>.remote`, `origin`, then the sole configured remote.
    Stop if the result is local (`.`), missing, or ambiguous.
-6. Run `git push --set-upstream "<REMOTE>" "HEAD:refs/heads/<BRANCH>"`. Never force-push.
+5. Run `git push --set-upstream "<REMOTE>" "HEAD:refs/heads/<BRANCH>"`. Never force-push.
    `--set-upstream` is what leaves the branch with an upstream: it is silently ignored on an
    OID refspec, and `push.autoSetupRemote` only covers a push with no refspec, so a branch
    pushed either of those ways has none and tooling that maps a branch to its PR finds
    nothing. If the push fails, surface stderr verbatim and do not retry or create the PR.
-7. Verify what actually landed: `git rev-parse "<REMOTE>/<BRANCH>"` must equal `<HEAD_OID>`.
+6. Verify what actually landed: `git rev-parse "<REMOTE>/<BRANCH>"` must equal `<HEAD_OID>`.
    On mismatch, stop without creating the PR and report both OIDs — the remote holds
-   something the user never approved.
-8. Run
-   `gh pr create --head "<BRANCH>" --title "<TITLE>" --body "<BODY>" --base "<BASE>"`,
+   something other than the drafted branch.
+7. Unless an open PR already exists, run
+   `gh pr create --draft --head "<BRANCH>" --title "<TITLE>" --body "<BODY>" --base "<BASE>"`,
    passing every value as a separately quoted argument without `eval`. If it fails,
    surface stderr verbatim and do not retry. On success, capture the PR URL from stdout.
 
@@ -84,7 +81,7 @@ that work separately.
 
 ```text
 git-gremlin:pr report
-  PR:     <url>
+  PR:     <url> (draft | existing, updated)
   Title:  <pr title>
   Base:   <base branch>
   Branch: <branch> published via <remote>
@@ -92,10 +89,9 @@ git-gremlin:pr report
 
 ## Never
 
-- Push during drafting or before the user confirms the displayed PR proposal.
-- Push when the current branch or `HEAD` differs from the approved proposal.
+- Push or create anything when the user asked only for PR text.
+- Create a PR that is not a draft, or a second PR for a branch that already has an open one.
 - Push the base branch, force-push, or choose between ambiguous remotes.
-- Create a PR without explicit user confirmation.
 - Retry silently after `git push` or `gh pr create` failure.
 - Run test suites, merge, update external issue state, or invoke unrelated workflows unless
   the user asks separately. The conditional drift checkpoint above is part of PR preparation.

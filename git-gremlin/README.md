@@ -5,19 +5,19 @@
 Review-comment discipline, commit, and PR helper for Claude Code and Codex.
 
 It recognizes commit or PR intent, drafts the boring text from the current git state, stages
-dirty changes when an actual commit needs them, and publishes local branches after the PR
-confirmation gate. Code review itself belongs to the runtime's native reviewer; verification
+dirty changes when an actual commit needs them, and publishes local branches as draft PRs. Once a task that changed files is finished, the agent
+commits and opens the draft PR on its own; the user marks it ready for review. Code review itself belongs to the runtime's native reviewer; verification
 belongs to hooks and CI. When a source spec or issue Acceptance is available, PR
 preparation invokes Acid Prophet to check local changes and the committed PR payload
 for drift. Workspace orchestration stays outside Git Gremlin.
 
 ## Skills
 
-| Skill                                | Purpose                                                                       |
-| ------------------------------------ | ----------------------------------------------------------------------------- |
-| `git-gremlin:commit`                 | Commit a staged selection, or stage dirty changes when no selection exists    |
-| `git-gremlin:handle-review-comments` | Push before announcing a fix; reply, then resolve every refused comment       |
-| `git-gremlin:pr`                     | Draft a PR, then publish the branch and create it after explicit confirmation |
+| Skill                                | Purpose                                                                    |
+| ------------------------------------ | -------------------------------------------------------------------------- |
+| `git-gremlin:commit`                 | Commit a staged selection, or stage dirty changes when no selection exists |
+| `git-gremlin:handle-review-comments` | Push before announcing a fix; reply, then resolve every refused comment    |
+| `git-gremlin:pr`                     | Publish the branch and open a draft PR, or push to the branch's open PR    |
 
 `handle-review-comments` is an ambient discipline, not a triage workflow. It never decides
 whether feedback is valid, and it orders no `git commit` or `git push` of its own. It adds
