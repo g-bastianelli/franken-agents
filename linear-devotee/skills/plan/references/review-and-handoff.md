@@ -49,7 +49,10 @@ installed Acid Prophet `shared/development-drift.md`, retains source/issue ident
 after each functional block and before a PR, and runs `moon-moth:verify` in a moon workspace.
 If Acid Prophet is unavailable, report the limit instead of claiming the checks ran.
 
-Once the implementation is complete and its verification passes, deliver it without asking:
+Once the implementation is complete and its verification passes, deliver it without asking.
+Deliver only from a feature branch: on the base branch or a detached `HEAD`, report the work as
+uncommitted and stop. Pass `git-gremlin:commit` the exact paths the implementation created,
+changed, or deleted, never "all changes", so unrelated work in the tree stays out.
 
 **REQUIRED SUB-SKILL:** Use `git-gremlin:commit`, then `git-gremlin:pr` (the PR opens as a draft).
 

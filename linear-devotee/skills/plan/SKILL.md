@@ -52,5 +52,6 @@ visible.
 
 Read [`references/review-and-handoff.md`](references/review-and-handoff.md), then perform
 one risk-proportionate review, resolve supported findings, validate only clean authorized
-artifacts, and emit the delivery packet. Planning itself never implements, mutates Linear,
-commits, pushes, or rebases; a requested implementation ends in a draft PR.
+artifacts, and emit the delivery packet. The planning phase never implements, mutates
+Linear, commits, pushes, or rebases. A requested implementation that follows it is delivered
+as a draft PR through Git Gremlin, as the reference describes.
