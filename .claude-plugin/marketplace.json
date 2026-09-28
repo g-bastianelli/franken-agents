@@ -12,7 +12,7 @@
         "source": "git-subdir",
         "url": "https://github.com/g-bastianelli/nuthouse",
         "path": "subroutine",
-        "sha": "83980d49fb7a867eeedb96503cb481eda966f412"
+        "sha": "ebf37dead3957fe4fb5ddbbf58b4ec17978ae25b"
       },
       "category": "productivity"
     },
@@ -22,7 +22,7 @@
         "source": "git-subdir",
         "url": "https://github.com/g-bastianelli/nuthouse",
         "path": "linear-devotee",
-        "sha": "f07c55a009ac6e9a22074c267e0d2d293f5e16d3"
+        "sha": "4844419135f98cd91746419ca158853f4eb1dc69"
       },
       "category": "productivity"
     },
@@ -32,7 +32,7 @@
         "source": "git-subdir",
         "url": "https://github.com/g-bastianelli/nuthouse",
         "path": "acid-prophet",
-        "sha": "f07c55a009ac6e9a22074c267e0d2d293f5e16d3"
+        "sha": "a2c0207eb73d7e7a32b1e29dd48405846e591c2f"
       },
       "category": "productivity"
     },
@@ -42,7 +42,7 @@
         "source": "git-subdir",
         "url": "https://github.com/g-bastianelli/nuthouse",
         "path": "git-gremlin",
-        "sha": "f07c55a009ac6e9a22074c267e0d2d293f5e16d3"
+        "sha": "4844419135f98cd91746419ca158853f4eb1dc69"
       },
       "category": "productivity"
     },
@@ -52,7 +52,7 @@
         "source": "git-subdir",
         "url": "https://github.com/g-bastianelli/nuthouse",
         "path": "lore-hound",
-        "sha": "fada6520f9db9187bcbdcf678e75573b2dfd0dc5"
+        "sha": "a2c0207eb73d7e7a32b1e29dd48405846e591c2f"
       },
       "category": "productivity"
     },
@@ -62,7 +62,7 @@
         "source": "git-subdir",
         "url": "https://github.com/g-bastianelli/nuthouse",
         "path": "stack-golem",
-        "sha": "fada6520f9db9187bcbdcf678e75573b2dfd0dc5"
+        "sha": "a2c0207eb73d7e7a32b1e29dd48405846e591c2f"
       },
       "category": "productivity"
     },
@@ -82,7 +82,7 @@
         "source": "git-subdir",
         "url": "https://github.com/g-bastianelli/nuthouse",
         "path": "monkey-maestro",
-        "sha": "7f7e2191e69a77c80372132de8e1782f79a37335"
+        "sha": "a2c0207eb73d7e7a32b1e29dd48405846e591c2f"
       },
       "category": "productivity"
     }
