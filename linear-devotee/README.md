@@ -40,6 +40,9 @@ and delegates ordinary reversible implementation choices within the user's autho
 challenge behavior and observable verification: an AC label or a passing helper test does not
 prove the requested integration works. Review loops stop on a specific unresolved decision.
 
+Once a requested implementation is complete and verified, the plan hands it to
+`git-gremlin:commit` and `git-gremlin:pr`, which open a draft PR without asking.
+
 ## Delegation
 
 | Agent                  | Responsibility                                                                             |

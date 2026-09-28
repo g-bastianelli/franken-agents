@@ -5,8 +5,8 @@
 Review-comment discipline, commit, and PR helper for Claude Code and Codex.
 
 It recognizes commit or PR intent, drafts the boring text from the current git state, stages
-dirty changes when an actual commit needs them, and publishes local branches as draft PRs. Once a task that changed files is finished, the agent
-commits and opens the draft PR on its own; the user marks it ready for review. Code review itself belongs to the runtime's native reviewer; verification
+dirty changes when an actual commit needs them, and publishes local branches as draft PRs without a confirmation gate; the user marks them ready
+for review. `linear-devotee:plan` chains to `commit` then `pr` once an implementation is done. Code review itself belongs to the runtime's native reviewer; verification
 belongs to hooks and CI. When a source spec or issue Acceptance is available, PR
 preparation invokes Acid Prophet to check local changes and the committed PR payload
 for drift. Workspace orchestration stays outside Git Gremlin.

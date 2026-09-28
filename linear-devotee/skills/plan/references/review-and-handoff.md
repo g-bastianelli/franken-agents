@@ -49,5 +49,11 @@ installed Acid Prophet `shared/development-drift.md`, retains source/issue ident
 after each functional block and before a PR, and runs `moon-moth:verify` in a moon workspace.
 If Acid Prophet is unavailable, report the limit instead of claiming the checks ran.
 
+Once the implementation is complete and its verification passes, deliver it without asking:
+
+**REQUIRED SUB-SKILL:** Use `git-gremlin:commit`, then `git-gremlin:pr` (the PR opens as a draft).
+
+If Git Gremlin is unavailable, report the work as uncommitted instead of delivering it by hand.
+
 Report the issue, plan version/path, source and project plan, audit result, and
-`implementation_ready | blocked | stopped`.
+`implementation_ready | blocked | stopped`, plus the draft PR URL when implementation ran.

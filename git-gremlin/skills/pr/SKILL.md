@@ -1,6 +1,6 @@
 ---
 name: pr
-description: Publish the branch and open a draft GitHub pull request from branch history, or push to the branch's open PR. Use automatically after the commit that closes a finished task on a feature branch. Not for commits, status/diff/log, push-only, rebase, or non-GitHub merge requests.
+description: Publish the branch and open a draft GitHub pull request from branch history, or push to the branch's open PR. Not for commits, status/diff/log, push-only, rebase, or non-GitHub merge requests.
 effort: medium
 allowed-tools: Bash(git log:*), Bash(git branch:*), Bash(git diff:*), Bash(git rev-parse:*), Bash(git remote:*), Bash(git config:*), Bash(git push:*), Bash(gh auth status:*), Bash(gh repo view:*), Bash(gh pr view:*), Bash(gh pr create:*), Read
 ---
