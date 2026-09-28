@@ -1,6 +1,6 @@
 ---
 name: commit
-description: Create a Git commit from staged or explicitly scoped dirty changes when the user asks to commit. Not for status, diff, log, push, rebase, or PR creation.
+description: Create a Git commit from staged or explicitly scoped dirty changes when the user asks to commit or a workflow chains to it. Not for status, diff, log, push, rebase, or PR creation.
 effort: high
 allowed-tools: Bash(git status:*), Bash(git diff:*), Bash(git add:*), Bash(git commit:*), Bash(git rev-parse:*), Read
 ---
@@ -54,7 +54,8 @@ Read `../../persona.md`; it is canonical for this skill's user-facing output, an
    Never describe a change absent from the diff. For draft-only intent, display the message
    and stop.
 4. For an actual commit request, run `git commit -m "<MESSAGE>"`, passing the message as
-   one quoted argument. The user's request is the approval gate.
+   one quoted argument. The user's request, or the
+   workflow that chained to this skill, is the approval gate.
    - On failure, surface stderr verbatim and stop. Never retry a pre-commit hook failure or
      bypass it with `--no-verify`.
    - On success, read the hash with `git rev-parse --short HEAD`.
