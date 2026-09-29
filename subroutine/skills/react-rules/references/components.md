@@ -5,9 +5,38 @@ rendering a collection, or branching on a union.
 
 ## Contents
 
+- Prefer composable component APIs
 - Make the file tree express the render tree
 - Pass identity, not snapshots
 - Branch on a union in one place
+
+## Prefer composable component APIs
+
+Make composition the default when designing or consuming React components.
+For multipart UI such as tables, menus, selects, comboboxes, dialogs, tabs, and
+accordions, compose the existing design system's parts at the call site. Use
+`children` or focused slots so callers control content and structure without
+adding a prop or feature flag for every variation.
+
+Keep behavior props such as `value`, `open`, and change handlers on the part
+that owns them. Reuse the design system's state and accessibility behavior.
+A domain wrapper can capture a repeated composition; keep its parts extensible
+instead of turning it into a universal configuration-driven component.
+
+```tsx
+<Select value={status} onValueChange={onStatusChange}>
+  <SelectTrigger aria-label="Status">
+    <SelectValue placeholder="Choose a status" />
+  </SelectTrigger>
+  <SelectContent>
+    <SelectItem value="active">Active</SelectItem>
+    <SelectItem value="archived">Archived</SelectItem>
+  </SelectContent>
+</Select>
+```
+
+The same preference applies to table headers, rows, and cells; menu triggers,
+groups, and items; and other components with independently useful parts.
 
 ## Make the file tree express the render tree
 
@@ -87,7 +116,9 @@ would run 5,000 linear searches.
 
 Exceptions that legitimately take an array: generic design-system components
 (`Select`, `Combobox`, `Table`), virtualized lists that need the array to compute
-what they display, and constant lists such as enum options.
+what they display, and constant lists such as enum options. These exceptions
+allow required data props; prefer the composable API whenever the design system
+offers one.
 
 The child owns its loading and empty behavior, and returns `null` when it has
 nothing to render.
