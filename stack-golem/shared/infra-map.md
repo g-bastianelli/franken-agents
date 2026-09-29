@@ -7,7 +7,6 @@ keys instead of inlining values — update a value here and every skill follows.
 | Key                       | Purpose                                                         | Value                                                                           |
 | ------------------------- | --------------------------------------------------------------- | ------------------------------------------------------------------------------- |
 | `ROOT_ENV`                | notom-platform root `.env` (source of truth for local env vars) | `/Users/gbastianelli/.superset/projects/notom-platform/.env`                    |
-| `INSOMNIA_GIT_DIR`        | Insomnia Git Sync repos on disk (macOS)                         | `~/Library/Application Support/Insomnia/version-control/git/`                   |
 | `LOKI_ENDPOINT`           | Cockpit Loki logs API                                           | `https://c11ce546-873d-43e2-ae57-a18117f89e4e.logs.cockpit.fr-par.scw.cloud`    |
 | `PROM_ENDPOINT`           | Cockpit Prometheus metrics API                                  | `https://d8d4c40d-5d0e-4702-8c75-d4e3a70e6f6b.metrics.cockpit.fr-par.scw.cloud` |
 | `GRAFANA_DASHBOARDS`      | Cockpit Grafana dashboards (visual exploration only)            | `https://0ff77eb4-546c-48bf-b5d0e-f16585298484.dashboard.cockpit.scaleway.com`  |

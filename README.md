@@ -23,7 +23,7 @@
 | [acid-prophet](./acid-prophet)     | Claude Code + Codex | Spec writing, spec audit, and PR/spec drift checks                                              |
 | [git-gremlin](./git-gremlin)       | Claude Code + Codex | Commit and PR drafting with scoped mutation gates, plus review-comment discipline               |
 | [lore-hound](./lore-hound)         | Claude Code + Codex | Source-hunting research harness: fan-out search → fetch → verify → cite                         |
-| [stack-golem](./stack-golem)       | Claude Code + Codex | Notom-stack ops & debug — Scaleway, observability, local dev, Insomnia                          |
+| [stack-golem](./stack-golem)       | Claude Code + Codex | Notom-stack ops & debug — Scaleway, observability, local dev                                    |
 | [moon-moth](./moon-moth)           | Claude Code + Codex | Small Moon helper that reports and verifies affected projects                                   |
 | [monkey-maestro](./monkey-maestro) | Claude Code + Codex | Linear-first parallel orchestration with scoped Superset runtime recovery                       |
 
