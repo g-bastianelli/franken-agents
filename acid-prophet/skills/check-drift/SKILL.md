@@ -14,7 +14,8 @@ Before delegation, read `${CLAUDE_PLUGIN_ROOT}/shared/agent-runtime-map.md`. Rea
 `../../persona.md`; it is canonical for user-facing output until the report.
 
 This is a rigid read-only comparison. Every active Acceptance id and normative constraint receives
-`CLEAN`, `DRIFT`, `AMBIGUOUS`, or `UNRELATED`, with evidence, or there is no verdict.
+`CLEAN`, `DRIFT`, `AMBIGUOUS`, or `UNRELATED`, or there is no verdict. In-scope criteria need
+evidence; out-of-scope ones are `UNRELATED` with a one-line reason.
 
 ## Workflow
 

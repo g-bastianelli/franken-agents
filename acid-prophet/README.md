@@ -26,9 +26,10 @@ through plans, contracts, quickstarts, Linear issues, checklists, and drift repo
 
 Implementation handoffs from `write-plan` and `linear-devotee:plan` carry the
 [development checkpoints](shared/development-drift.md). After each completed functional
-block and before a PR, the active agent checks committed, staged, unstaged, and relevant
-untracked changes without a permission prompt. PR preparation also assesses HEAD alone;
-a local fix cannot hide drift in the commits being published. This is agent workflow
+block, the active agent checks committed, staged, unstaged, and relevant untracked
+changes without a permission prompt. PR preparation then assesses HEAD alone, once,
+reusing that report when nothing relevant was left uncommitted; a local fix cannot hide
+drift in the commits being published. This is agent workflow
 behavior, not a background watcher, and an inspection-only request stays read-only.
 
 `acid-prophet:reconcile-drift` corrects accidental implementation changes and revises

@@ -40,11 +40,16 @@ compare changed code only against changed expectations. No changes in scope is n
 
 ## Analyze drift
 
-Dispatch a read-only agent with reference, effective change, selected scope, and implementation
-block/issue. For every criterion and constraint return source path/id, classification, expected
-versus observed behavior, and file/line evidence. An untouched criterion is not automatically
-clean. Assess regressions and affected cross-cutting constraints; missing evidence inside scope is
-ambiguous.
+Split the criteria before dispatch. In scope: the Acceptance ids of the assessed block/issue,
+cross-cutting constraints, and any other criterion whose described behavior the changed files
+implement or touch. Everything else is `UNRELATED`, listed by id with a one-line reason and no
+evidence search. With no issue or block named, every criterion is in scope.
+
+Dispatch one read-only agent with the in-scope criteria, the changed paths with their diff, and the
+selected scope; it reads further files only to confirm specific behavior. For every in-scope
+criterion return source path/id, classification, expected versus observed behavior, and file/line
+evidence. An untouched in-scope criterion is not automatically clean. Assess regressions and
+affected cross-cutting constraints; missing evidence inside scope is ambiguous.
 
 Record counts, source version, base, HEAD, scope, and unresolved decisions. A clean result describes
 only this comparison.

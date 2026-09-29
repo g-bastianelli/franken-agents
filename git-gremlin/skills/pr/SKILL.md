@@ -35,12 +35,16 @@ Read `../../persona.md`; it is canonical for this skill's user-facing output, an
      drift assessment is unavailable, not a reason to invent requirements.
 
    **REQUIRED SUB-SKILL:** Use `acid-prophet:check-drift` when available, with the source,
-   inferred base, and intended PR scope. Check `worktree` and `committed` separately.
-   Follow its plugin's `shared/development-drift.md` for findings and existing repair
-   authority. Do not publish with unresolved drift or ambiguous findings. Local fixes
-   must enter HEAD through an authorized commit workflow before clearing committed drift.
-   If the skill is unavailable, disclose that limitation without claiming a clean result.
-   After any authorized repairs, refresh branch and `HEAD_OID` before drafting.
+   inferred base, intended PR scope, and `--scope committed` — only HEAD ships, so there is
+   no separate worktree pass here. Relevant uncommitted changes are reported as outside the
+   PR, not analyzed. Reuse a report from this session that already covers this source,
+   scope, and content (a worktree report whose assessed paths were then committed with
+   nothing relevant left dirty). Follow its plugin's `shared/development-drift.md` for
+   findings and existing repair authority. Do not publish with unresolved drift or
+   ambiguous findings. Local fixes must enter HEAD through an authorized commit workflow
+   before clearing committed drift. If the skill is unavailable, disclose that limitation
+   without claiming a clean result. After any authorized repairs, refresh branch and
+   `HEAD_OID` before drafting.
 
 2. Read `git log <base>...HEAD --oneline` and `git diff <base>...HEAD`. Detect Linear
    issue ids with `/\b[A-Z][A-Z0-9]+-[0-9]+\b/`, preferring the branch, then the log, then
