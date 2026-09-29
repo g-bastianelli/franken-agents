@@ -38,11 +38,12 @@ scanning the loaded pages, and not the whole list.
 ## Legitimate arrays
 
 Ask for a status filter built from a `Select` over enum options, and a virtualized
-table over the same rows.
+table over the same rows. The design system exposes composable select parts.
 
-Expected: the `Select` receives its option array and the virtualized list receives
-its row array. The agent neither splits the options into per-item components nor
-flags these arrays as violations.
+Expected: the filter composes the select's trigger, content, and items; its owner
+may map the enum options into items. The virtualized list receives its row array.
+If an existing design-system control only accepts an option array, passing it is
+allowed. Array exceptions do not make a configuration-driven wrapper the default.
 
 ## Comments beside a chatty file
 
