@@ -40,10 +40,13 @@ compare changed code only against changed expectations. No changes in scope is n
 
 ## Analyze drift
 
-Split the criteria before dispatch. In scope: the Acceptance ids of the assessed block/issue,
-cross-cutting constraints, and any other criterion whose described behavior the changed files
-implement or touch. Everything else is `UNRELATED`, listed by id with a one-line reason and no
-evidence search. With no issue or block named, every criterion is in scope.
+Split the criteria before dispatch. In scope: the Acceptance ids of the assessed block/issue —
+named by the caller, else read from the supplied plan's Acceptance traceability or the `covers`
+ids of the assessed deliverable's steps — cross-cutting constraints, and any other criterion whose
+described behavior the changed files implement or touch. Everything else is `UNRELATED`, listed by
+id with a one-line reason and no evidence search. With no ids from the caller or a plan, every
+criterion is in scope. The plan only scopes the check; code is judged against the source, never
+against the plan.
 
 Dispatch one read-only agent with the in-scope criteria, the changed paths with their diff, and the
 selected scope; it reads further files only to confirm specific behavior. For every in-scope

@@ -35,7 +35,8 @@ Read `../../persona.md`; it is canonical for this skill's user-facing output, an
      drift assessment is unavailable, not a reason to invent requirements.
 
    **REQUIRED SUB-SKILL:** Use `acid-prophet:check-drift` when available, with the source,
-   inferred base, intended PR scope, and `--scope committed` — only HEAD ships, so there is
+   inferred base, intended PR scope, the plan path when the delivery context has one, and
+   `--scope committed` — only HEAD ships, so there is
    no separate worktree pass here. Relevant uncommitted changes are reported as outside the
    PR, not analyzed. Reuse a report from this session that already covers this source,
    scope, and content (a worktree report whose assessed paths were then committed with

@@ -10,7 +10,7 @@ After a functional block and its relevant checks are complete, when a decision d
 from the source, and before preparing a PR:
 
 **REQUIRED SUB-SKILL:** Use `acid-prophet:check-drift` with the source, base, completed
-block/issue scope, and `--scope worktree`.
+block/issue scope, the plan path when one exists, and `--scope worktree`.
 
 Run without a permission prompt. Reuse a report only while source, decisions, relevant
 code, and assessed scope remain unchanged. Do not run after every file edit or label

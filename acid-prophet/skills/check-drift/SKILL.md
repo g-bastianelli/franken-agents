@@ -1,7 +1,7 @@
 ---
 name: check-drift
 description: Detect drift against authoritative Acceptance during planning, after an implementation block, or before a PR. Covers committed and working-tree changes without editing the source.
-argument-hint: "[--plan <path> --spec <path>] [--scope worktree|committed] [--base <ref>]"
+argument-hint: "[--plan <path>] [--spec <path>] [--scope worktree|committed] [--base <ref>]"
 effort: high
 allowed-tools: Bash(git diff:*), Bash(git log:*), Bash(git branch:*), Bash(git status:*), Bash(git ls-files:*), Bash(git show:*), Bash(git rev-parse:*), Bash(git merge-base:*), Bash(gh:*), Read, Write, Glob, Grep, Agent
 paths: ["docs/acid-prophet/**"]
