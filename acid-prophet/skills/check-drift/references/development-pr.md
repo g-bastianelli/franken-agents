@@ -10,13 +10,17 @@
 ## Resolve the source
 
 Verify Git and choose `worktree` by default or `committed` for the actual PR payload. Prefer an
-explicit readable spec. Otherwise scan `docs/acid-prophet/specs/` in this order: matching
-`linear-project`, project id in body, branch issue id in body, close filename slug. Ask if still
-ambiguous. If needed, use the branch issue only to resolve its project and retry.
+explicit readable spec, then supplied issue Acceptance.
 
-When no local spec exists, use supplied issue Acceptance. An automatic checkpoint with no source
-reports unavailable; an explicit check asks for the source. Once selected, a spec remains primary
-over later Linear context.
+An automatic checkpoint (a PR or implementation workflow, not the user asking) stops there or at
+one exact match: a spec in `docs/acid-prophet/specs/` whose `linear-project`, project id, or issue
+id matches the branch issue id. Anything else — no issue id, no match, several matches — returns
+`skipped: no source` at once, without scanning further, asking, or loading Linear. Ad-hoc work is
+not a drift failure; the report says the check was skipped, never that it was clean.
+
+An explicit check also tries a close filename slug, may use the branch issue to resolve its
+project and retry, and asks for the source when still missing or ambiguous. Once selected, a spec
+remains primary over later Linear context.
 
 From a spec, extract the active Acceptance section only, excluding history, plus Goal/Problem,
 Solution, Constraints, Non-goals, and Edges. From Linear fallback, use a bounded read-only agent to

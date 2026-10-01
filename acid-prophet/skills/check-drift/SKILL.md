@@ -40,7 +40,7 @@ evidence; out-of-scope ones are `UNRELATED` with a one-line reason.
 acid-prophet:check-drift
   Branch:       <current>
   Project:      <name/id | unknown>
-  Source:       <spec path | Linear fallback>
+  Source:       <spec path | Linear fallback | skipped: no source>
   Scope:        planned-intent | worktree | committed
   Comparison:   <base/head or plan/spec versions>
   Open markers: <count or none>

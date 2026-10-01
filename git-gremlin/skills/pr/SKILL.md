@@ -29,16 +29,15 @@ Read `../../persona.md`; it is canonical for this skill's user-facing output, an
    - Stop on a detached `HEAD`, when the current branch is the base branch, or when no
      commits exist ahead of the base.
    - Capture the current branch and `HEAD_OID = git rev-parse HEAD`.
-   - If an authoritative spec or issue Acceptance is available in the delivery context
-     or `docs/acid-prophet/specs/`, resolve the applicable source and run the checkpoint
-     below before drafting. An ambiguous source needs clarification. No source means
-     drift assessment is unavailable, not a reason to invent requirements.
+   - Run the checkpoint below only when the delivery context names a spec or issue
+     Acceptance, or the branch carries a Linear issue id. Otherwise skip it: ad-hoc work
+     without a source opens its PR without asking, and the proposal says drift was not
+     assessed. A `skipped: no source` result from the checkpoint is handled the same way.
 
    **REQUIRED SUB-SKILL:** Use `acid-prophet:check-drift` when available, with the source,
    inferred base, intended PR scope, the plan path when the delivery context has one, and
-   `--scope committed` — only HEAD ships, so there is
-   no separate worktree pass here. Relevant uncommitted changes are reported as outside the
-   PR, not analyzed. Reuse a report from this session that already covers this source,
+   `--scope committed` — only HEAD ships, so there is no separate worktree pass here.
+   Relevant uncommitted changes are reported as outside the PR, not analyzed. Reuse a report from this session that already covers this source,
    scope, and content (a worktree report whose assessed paths were then committed with
    nothing relevant left dirty). Follow its plugin's `shared/development-drift.md` for
    findings and existing repair authority. Do not publish with unresolved drift or
