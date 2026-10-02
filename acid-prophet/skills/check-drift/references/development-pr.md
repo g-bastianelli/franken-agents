@@ -10,13 +10,17 @@
 ## Resolve the source
 
 Verify Git and choose `worktree` by default or `committed` for the actual PR payload. Prefer an
-explicit readable spec. Otherwise scan `docs/acid-prophet/specs/` in this order: matching
-`linear-project`, project id in body, branch issue id in body, close filename slug. Ask if still
-ambiguous. If needed, use the branch issue only to resolve its project and retry.
+explicit readable spec, then supplied issue Acceptance.
 
-When no local spec exists, use supplied issue Acceptance. An automatic checkpoint with no source
-reports unavailable; an explicit check asks for the source. Once selected, a spec remains primary
-over later Linear context.
+An automatic checkpoint (a PR or implementation workflow, not the user asking) stops there or at
+one exact match: a spec in `docs/acid-prophet/specs/` whose `linear-project`, project id, or issue
+id matches the branch issue id. Anything else — no issue id, no match, several matches — returns
+`skipped: no source` at once, without scanning further, asking, or loading Linear. Ad-hoc work is
+not a drift failure; the report says the check was skipped, never that it was clean.
+
+An explicit check also tries a close filename slug, may use the branch issue to resolve its
+project and retry, and asks for the source when still missing or ambiguous. Once selected, a spec
+remains primary over later Linear context.
 
 From a spec, extract the active Acceptance section only, excluding history, plus Goal/Problem,
 Solution, Constraints, Non-goals, and Edges. From Linear fallback, use a bounded read-only agent to
@@ -40,11 +44,19 @@ compare changed code only against changed expectations. No changes in scope is n
 
 ## Analyze drift
 
-Dispatch a read-only agent with reference, effective change, selected scope, and implementation
-block/issue. For every criterion and constraint return source path/id, classification, expected
-versus observed behavior, and file/line evidence. An untouched criterion is not automatically
-clean. Assess regressions and affected cross-cutting constraints; missing evidence inside scope is
-ambiguous.
+Split the criteria before dispatch. In scope: the Acceptance ids of the assessed block/issue —
+named by the caller, else read from the supplied plan's Acceptance traceability or the `covers`
+ids of the assessed deliverable's steps — cross-cutting constraints, and any other criterion whose
+described behavior the changed files implement or touch. Everything else is `UNRELATED`, listed by
+id with a one-line reason and no evidence search. With no ids from the caller or a plan, every
+criterion is in scope. The plan only scopes the check; code is judged against the source, never
+against the plan.
+
+Dispatch one read-only agent with the in-scope criteria, the changed paths with their diff, and the
+selected scope; it reads further files only to confirm specific behavior. For every in-scope
+criterion return source path/id, classification, expected versus observed behavior, and file/line
+evidence. An untouched in-scope criterion is not automatically clean. Assess regressions and
+affected cross-cutting constraints; missing evidence inside scope is ambiguous.
 
 Record counts, source version, base, HEAD, scope, and unresolved decisions. A clean result describes
 only this comparison.

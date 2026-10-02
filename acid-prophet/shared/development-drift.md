@@ -10,12 +10,14 @@ After a functional block and its relevant checks are complete, when a decision d
 from the source, and before preparing a PR:
 
 **REQUIRED SUB-SKILL:** Use `acid-prophet:check-drift` with the source, base, completed
-block/issue scope, and `--scope worktree`.
+block/issue scope, the plan path when one exists, and `--scope worktree`.
 
 Run without a permission prompt. Reuse a report only while source, decisions, relevant
 code, and assessed scope remain unchanged. Do not run after every file edit or label
-future work outside the completed block as a regression. Before a PR, also check
-`--scope committed` against the intended PR scope: uncommitted fixes are not in a PR.
+future work outside the completed block as a regression. The last block checkpoint is
+the pre-PR worktree check; do not repeat it. The PR workflow checks `--scope committed`
+once, because uncommitted fixes are not in a PR, and reuses this report when exactly
+the assessed paths were committed and nothing relevant remains dirty.
 
 For DRIFT or AMBIGUOUS findings during authorized implementation:
 

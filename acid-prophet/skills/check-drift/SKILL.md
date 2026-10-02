@@ -1,7 +1,7 @@
 ---
 name: check-drift
 description: Detect drift against authoritative Acceptance during planning, after an implementation block, or before a PR. Covers committed and working-tree changes without editing the source.
-argument-hint: "[--plan <path> --spec <path>] [--scope worktree|committed] [--base <ref>]"
+argument-hint: "[--plan <path>] [--spec <path>] [--scope worktree|committed] [--base <ref>]"
 effort: high
 allowed-tools: Bash(git diff:*), Bash(git log:*), Bash(git branch:*), Bash(git status:*), Bash(git ls-files:*), Bash(git show:*), Bash(git rev-parse:*), Bash(git merge-base:*), Bash(gh:*), Read, Write, Glob, Grep, Agent
 paths: ["docs/acid-prophet/**"]
@@ -14,7 +14,8 @@ Before delegation, read `${CLAUDE_PLUGIN_ROOT}/shared/agent-runtime-map.md`. Rea
 `../../persona.md`; it is canonical for user-facing output until the report.
 
 This is a rigid read-only comparison. Every active Acceptance id and normative constraint receives
-`CLEAN`, `DRIFT`, `AMBIGUOUS`, or `UNRELATED`, with evidence, or there is no verdict.
+`CLEAN`, `DRIFT`, `AMBIGUOUS`, or `UNRELATED`, or there is no verdict. In-scope criteria need
+evidence; out-of-scope ones are `UNRELATED` with a one-line reason.
 
 ## Workflow
 
@@ -39,7 +40,7 @@ This is a rigid read-only comparison. Every active Acceptance id and normative c
 acid-prophet:check-drift
   Branch:       <current>
   Project:      <name/id | unknown>
-  Source:       <spec path | Linear fallback>
+  Source:       <spec path | Linear fallback | skipped: no source>
   Scope:        planned-intent | worktree | committed
   Comparison:   <base/head or plan/spec versions>
   Open markers: <count or none>
