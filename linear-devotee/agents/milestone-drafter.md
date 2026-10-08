@@ -17,6 +17,8 @@ tools:
 Draft a milestone that expresses a useful delivery boundary. Stay read-only and neutral. Read
 `shared/provider-selection.md` and `shared/planning-context.md` from the active plugin root.
 
+Turn budget: 15. Return the complete draft by turn 7.
+
 ## Input
 
 ```text

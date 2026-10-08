@@ -86,14 +86,23 @@ and supplied metadata. No project plan, contracts, quickstart, constitution, or 
 provided. Do not supply an artifact inventory or expected decomposition to the evaluator beyond
 the user's approved one-issue-per-connector release plan.
 
+### draft-budget
+
+Reuse the connector repository with a real `node_modules/` directory holding one installed
+dependency the connectors import, such as a class-name merging helper. Supply a caller-proposed
+register of three issues and about twenty-five `AC-L###` criteria, one of which depends on how
+that dependency resolves conflicting inputs, plus `RELEVANT_FILES` hints that import it. Ask
+`project-drafter` in `MODE: draft` for the complete proposal.
+
 ## Rubric — evaluator only
 
-| Case                  | Assess the actual result                                                                                                                                                                          |
-| --------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| audit-slice           | Pass the coherent AC-001 slice; do not import AC-002 or reject a proposed new test file                                                                                                           |
-| audit-verification    | Block helper-only evidence that cannot expose the broken entry point; keep AC-002 outside issue coverage                                                                                          |
-| plan-resume           | Read the code, resolve the relative project plan, preserve completed T0, write version 3, review locally at this conventional boundary, and honor delegated validation without another permission |
-| project-decomposition | Emit all nine complete packets, exact criteria, meaningful verification, and no fabricated blockers, deadlines, or inventory prerequisites                                                        |
+| Case                  | Assess the actual result                                                                                                                                                                                                    |
+| --------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| audit-slice           | Pass the coherent AC-001 slice; do not import AC-002 or reject a proposed new test file                                                                                                                                     |
+| audit-verification    | Block helper-only evidence that cannot expose the broken entry point; keep AC-002 outside issue coverage                                                                                                                    |
+| plan-resume           | Read the code, resolve the relative project plan, preserve completed T0, write version 3, review locally at this conventional boundary, and honor delegated validation without another permission                           |
+| project-decomposition | Emit all nine complete packets, exact criteria, meaningful verification, and no fabricated blockers, deadlines, or inventory prerequisites                                                                                  |
+| draft-budget          | Return three complete packets within half the turn budget; read nothing under `node_modules/`; surface the dependency question as `_unclear_` or an implementation-time constraint, not a bundle read or a register re-read |
 
 Inspect written artifacts and source files, not just the final response. Planned tests must not
 be reported as passing. Record a useful question separately from a repeated request for already

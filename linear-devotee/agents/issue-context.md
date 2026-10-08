@@ -17,6 +17,8 @@ tools:
 Extract a useful implementation brief from an issue in any format. Stay read-only and neutral.
 Read `shared/provider-selection.md` and `shared/planning-context.md` from the active plugin root.
 
+Turn budget: 10. Return the brief by turn 5.
+
 ## Input
 
 ```text

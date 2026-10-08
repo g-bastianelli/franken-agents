@@ -10,8 +10,11 @@ required criterion set for that issue, not every criterion in the project's spec
 Acceptance, constraints, and the project plan to check consistency and dependencies; criteria
 assigned to other issues stay outside this issue's implementation scope.
 
-- Copy a source-backed `AC-###` criterion exactly from its active source register. A different
-  meaning under the same id is a conflict, not a refinement. Never renumber or reuse ids.
+- Copy a criterion exactly from its register, whether source-backed `AC-###` or proposed
+  `AC-L###`: reproduce the text as one file read returned it, word for word. Exact is not
+  byte-level; never re-read a register to hunt for invisible characters or encoding differences.
+  A different meaning under the same id is a conflict, not a refinement. Never renumber or reuse
+  ids.
 - `AC-L###` denotes issue-local Acceptance when there is no source register. Keep it distinct
   from `AC-###`, including when their numeric suffixes match.
 - A shared criterion can appear in several issues when its delivery crosses boundaries. Name
@@ -54,12 +57,24 @@ a check-then-write validation provides an atomic guarantee.
 
 Read applicable repository instructions, the affected entry point, its immediate callers and
 boundaries, and relevant tests before proposing a change. Follow evidence outward only when it
-changes the plan. A cached file list is a starting point, not proof that files or behavior remain
-current.
+changes the plan. Never open installed dependencies (`node_modules/`, vendored packages, package
+caches, built bundles) unless the brief names a specific library behavior to confirm; a doubt
+about how a library behaves becomes an `_unclear_` item or a constraint to verify during
+implementation, never a bundle read. A cached file list is a starting point, not proof that files
+or behavior remain current.
 
 Classify paths as existing, explicitly proposed new, or unresolved. An absent path claimed to
 exist is unresolved; an explicitly proposed file need not exist yet. Confirm the parent module
 and integration point for a new file. Keep only existing readable files in `RELEVANT_FILES`.
+
+## Turn budget
+
+Your definition states your turn budget. An agent that exhausts it returns a partial transcript
+the caller cannot use, so an unreturned proposal is worth nothing. Return the complete result, or
+the first complete batch of a large proposal, no later than half the budget; the remaining turns
+serve the caller's follow-up requests only. When a check would not fit, return without it and
+record what was not inspected as `_unclear_` or as a constraint to verify during implementation.
+One more verification never outranks returning a usable result.
 
 ## Artifact resolution
 

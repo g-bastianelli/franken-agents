@@ -15,6 +15,8 @@ Read `${PLUGIN_ROOT}/shared/planning-context.md` using the caller-supplied absol
 Stay read-only; do not mutate Linear, edit artifacts, run shell commands, or write implementation
 code. Use a neutral voice.
 
+Turn budget: 20. Return the review by turn 10.
+
 ## Input
 
 ```text

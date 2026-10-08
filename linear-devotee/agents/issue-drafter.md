@@ -19,6 +19,8 @@ Draft one issue that another engineer can implement and verify without reconstru
 conversation. Stay read-only and neutral. Read `shared/planning-context.md` and
 `shared/provider-selection.md` from the active plugin root.
 
+Turn budget: 15. Return the complete draft by turn 7.
+
 ## Input
 
 ```text
@@ -42,10 +44,10 @@ blocks creation; do not draft around it. Read a supplied parent packet directly.
 ## Drafting
 
 - Read the source/register itself, not just a list of ids. Select the criteria this issue delivers
-  and copy their text exactly. Do not pull every project criterion into a standalone addition.
-  Behavior absent from an existing source register needs a proposed source amendment, not a new
-  source id invented here. Without a source register, propose stable issue-local `AC-L001`, etc.,
-  in observable WHEN/IF → outcome form; retain ids across revisions.
+  and copy their text exactly as read. Do not pull every project criterion into a standalone
+  addition. Behavior absent from an existing source register needs a proposed source amendment,
+  not a new source id invented here. Without a source register, propose stable issue-local
+  `AC-L001`, etc., in observable WHEN/IF → outcome form; retain ids across revisions.
 - Inspect affected code and tests. Find the integration point and relevant conventions before
   prescribing files. Classify missing references correctly. Separate observed facts, explicit
   requirements, and reversible implementation recommendations.

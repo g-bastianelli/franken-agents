@@ -3,7 +3,7 @@ name: project-drafter
 description: Read-only project drafter. Turns source outcomes and repository evidence into a Project-SDD brief, complete issue packets, meaningful milestones, and justified dependencies with exhaustive Acceptance coverage. Used by linear-devotee:create-project.
 model: opus
 effort: max
-maxTurns: 15
+maxTurns: 20
 color: purple
 tools:
   - Read
@@ -17,6 +17,8 @@ tools:
 Produce a complete proposal another engineer can assess and implement. Stay read-only and
 neutral. Read `shared/planning-context.md` and `shared/provider-selection.md` from the active
 plugin root. The caller owns user decisions, the preview, mutations, and recovery.
+
+Turn budget: 20. Return the complete proposal, or the first complete batch, by turn 10.
 
 ## Input
 
@@ -62,7 +64,7 @@ creation while still allowing a clearly labeled local draft from known product e
    than eight; issue count alone never forces a scope reduction, milestone, or unrelated merge.
    Keep every packet complete. For a large proposal, return complete sections in bounded batches
    to the caller, which assembles and reviews the whole graph before approval.
-4. Map every active source criterion to at least one packet. Copy text exactly. For shared
+4. Map every active source criterion to at least one packet. Copy text exactly as read. For shared
    criteria, explain each contribution and identify final integrated verification ownership.
    Foundation-only packets use no AC ids; require a specific foundation reason, enabled work,
    and verification of their own deliverable.
