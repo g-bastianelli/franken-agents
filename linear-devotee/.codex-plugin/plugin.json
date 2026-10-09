@@ -1,7 +1,7 @@
 {
   "name": "linear-devotee",
   "version": "1.1.4",
-  "description": "Linear planning grounded in issue scope, source Acceptance, repository behavior, and independently reviewed deliverables, with recoverable verified project creation.",
+  "description": "Linear planning, recoverable project creation, and full issue delivery through native PR review, protected merge, and verified completion on Claude Code and Codex.",
   "author": {
     "name": "g-bastianelli"
   },
@@ -9,14 +9,15 @@
   "skills": "./skills/",
   "interface": {
     "displayName": "Linear Devotee",
-    "shortDescription": "Plan and create Linear work from Codex",
-    "longDescription": "Linear Devotee briefs issues with decision sources, plans only their assigned Acceptance, and reviews actual integration and observable verification. Project drafting produces complete deliverables, meaningful milestones, and justified dependencies without arbitrary issue-count limits. Creation replays the authorized complete payload, recovers by exact markers, and verifies the resulting graph. Existing authorization carries through scoped handoffs.",
+    "shortDescription": "Plan, create, and deliver Linear work",
+    "longDescription": "Linear Devotee briefs issues with decision sources, plans their assigned Acceptance, and reviews actual integration and observable verification. Full delivery reuses one issue workspace and PR through native review, corrections, protected merge, and observed Linear completion. Project creation replays the authorized payload, recovers by exact markers, and verifies the resulting graph. Existing authorization carries through scoped handoffs.",
     "developerName": "g-bastianelli",
     "category": "Developer Tools",
     "capabilities": ["Read", "Write"],
     "websiteURL": "https://github.com/g-bastianelli/nuthouse",
     "defaultPrompt": [
       "Use Linear Devotee to brief this Linear issue before implementation.",
+      "Use Linear Devotee to deliver this issue through PR review, merge, and Linear completion.",
       "Use Linear Devotee to create a project, milestones, and issues from this spec.",
       "Use Linear Devotee to recommend the next issue after this one is done."
     ],

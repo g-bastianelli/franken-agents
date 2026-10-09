@@ -14,6 +14,7 @@ and review the complete proposal before handing it to implementation or writing 
 | --------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------- |
 | `linear-devotee:greet`            | Brief a fresh issue with decision sources, resolve its spec and project plan, and prepare authorized delivery                           |
 | `linear-devotee:plan`             | Revise or write an issue-scoped implementation plan, review it at the appropriate depth, and hand off validated work                    |
+| `linear-devotee:deliver`          | Own one issue through implementation, native PR review, corrections, protected merge, and observed Linear completion                    |
 | `linear-devotee:next-issue`       | Recommend available work from current statuses and actual blockers, identifying active work separately                                  |
 | `linear-devotee:create-project`   | Draft complete issue packets and meaningful milestones, review coverage and dependencies, then create and verify the authorized cascade |
 | `linear-devotee:create-milestone` | Add one delivery boundary with observable exit evidence and an optional agreed date                                                     |
@@ -42,6 +43,25 @@ prove the requested integration works. Review loops stop on a specific unresolve
 
 Once a requested implementation is complete and verified, the plan hands it to
 `git-gremlin:commit` and `git-gremlin:pr`, which open a draft PR without asking.
+
+## Full issue delivery
+
+Ask `linear-devotee:deliver <issue-id>` to deliver through merge, or let an authorized Monkey
+Maestro worker call it in the issue's Superset workspace. This supplies one scoped authority
+for implementation, commits, PR publication, review corrections and replies, protected merge,
+and the issue's started/completed transitions. Briefs, plans, and draft-only requests keep
+their own scope. The startup hooks yield to an explicit delivery owner.
+
+`deliver` reads context directly, reuses the reviewed plan and existing PR, and delegates the
+GitHub lifecycle to `git-gremlin:finish-pr`. Code review uses the active Codex or Claude native
+command. The issue owner may use bounded specialists with distinct file ownership and reviews
+integration after meaningful changes. Missing tools, product decisions, persistent failures,
+and external waits produce an actionable `blocked` or `waiting` result for the coordinator.
+
+Recovery reads current Linear, Git, and GitHub state in the existing workspace. A merge queue
+or quiet terminal is not completion. Only an observed merged PR and the actual team's completed
+Linear state produce `done`. If merge succeeded but the Linear update failed, recovery performs
+only the missing status reconciliation. It never starts another PR or reopens a terminal issue.
 
 ## Delegation
 
@@ -75,8 +95,9 @@ bodies and other fields must match the preview before execution is ready. A disc
 including changed Acceptance wording under an unchanged id, blocks that handoff. Source linkage
 preserves spec ratification and review metadata.
 
-Greet owns the started-state transition for authorized delivery. A read-only brief does not
-change lifecycle state. Further delivery or Maestro execution follows the user's actual request.
+Greet and full delivery share the same verified started transition. Delivery also reconciles
+completion after merge, including an automatic Linear transition that already occurred. A
+read-only brief does not change lifecycle state; ambiguous team statuses need a real decision.
 
 ## Verification
 
@@ -87,6 +108,7 @@ Runtime checks cover the existing hook lifecycle, mutation envelope, and graph r
 bun test linear-devotee/
 bun run test:meta
 bun run check:codex-agents
+bun run check:skills
 ```
 
 ## Install

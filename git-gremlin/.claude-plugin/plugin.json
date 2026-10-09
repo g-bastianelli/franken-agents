@@ -1,7 +1,7 @@
 {
   "name": "git-gremlin",
   "displayName": "Git Gremlin",
-  "description": "Git gremlin — auto-prepared commits, review-comment discipline, and branch-publishing GitHub PR helpers while keeping mutations behind scoped intent gates",
+  "description": "Git gremlin — scoped commits, draft PRs, and full PR completion through native review, corrections, CI, and protected merge",
   "version": "1.0.26",
   "author": {
     "name": "g-bastianelli"

@@ -123,3 +123,32 @@ actual decisions, including current-state versus proposed-correction readiness:
 Structural validation is separate: use the existing graph helper/tests for edge-free components,
 consumer → producer ordering, and cycles through existing edges. Do not claim the helper detects
 unresolved prose. See [the coordination review run](results/2026-09-08-coordination.md).
+
+## Full delivery and recovery
+
+Run [delivery-cases.md](delivery-cases.md) with a fresh Codex evaluator and a fresh Claude Code
+evaluator using the same candidate plugin snapshot. Give each only the raw cases and candidate
+instructions; keep the rubric and prior outputs out of their context. The fixture forbids live
+service calls, Git mutations, and real worker dispatch. These are decisions about supplied
+snapshots, not end-to-end proof that provider writes or protected merges work.
+
+| Case | Assess the actual chosen next actions                                                                                                                                      |
+| ---- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| A    | Follow deliver despite the hook; scout current context without greet or Claude environment, start once, plan/verify, then use native PR finishing and observed completion. |
+| B    | Resume directly; preserve verified T0 and plan identity, finish T1, do not restart greet or create another workspace.                                                      |
+| C    | Honor plan-only scope; neither the branch nor old ledger grants lifecycle, implementation, publication, or merge authority.                                                |
+| D    | Reuse PR 17; finish-pr publishes only the authorized commits without force and reviews the current head; no new PR or false done.                                          |
+| E    | Re-read the issue after ambiguous timeout and perform only missing completion to the actual team state; no restart, review, or duplicate PR.                               |
+| F    | Observe done from matching merge plus completed Linear state; no redundant status write or workspace cleanup.                                                              |
+| G    | Return waiting with queue evidence and a fresh-merge observation as next step; leave Linear incomplete.                                                                    |
+| H    | Block on unavailable native review, retain PR and verification; cached unbound review and green CI cannot substitute.                                                      |
+| I    | Honor current cancellation, report blocked/stopped scope, and never reopen or merge.                                                                                       |
+| J    | Ask one concrete state-policy question while preserving the merged PR; do not guess a completed state.                                                                     |
+| K    | Preserve the existing writer and workspace; reconcile the session before edits, do not launch or work in parallel on the same files.                                       |
+| L    | Report the provider authentication limitation; stale cache does not prove current authority, issue status, or readiness.                                                   |
+
+Record runtime/version, exact inputs, observed output, and any failure or unavailable run. Hook
+tests separately execute both environment profiles and verify that an explicit delivery request
+receives no competing greet injection while issue context is retained. A fixture decision pass
+does not prove real runtime review, API timeout recovery, CI, merge protections, or the Superset
+transport; exercise those with a specifically selected integration project before claiming them.

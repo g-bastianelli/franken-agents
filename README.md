@@ -16,16 +16,16 @@
 
 ## Plugins
 
-| Plugin                             | Runtime             | Purpose                                                                                         |
-| ---------------------------------- | ------------------- | ----------------------------------------------------------------------------------------------- |
-| [subroutine](./subroutine)         | Claude Code + Codex | Ambient TS discipline knowledge skills that activate on matching files                          |
-| [linear-devotee](./linear-devotee) | Claude Code + Codex | Linear issue intake, planning, recoverable mutation cascades, and post-write graph verification |
-| [acid-prophet](./acid-prophet)     | Claude Code + Codex | Spec writing, spec audit, and PR/spec drift checks                                              |
-| [git-gremlin](./git-gremlin)       | Claude Code + Codex | Commit and PR drafting with scoped mutation gates, plus review-comment discipline               |
-| [lore-hound](./lore-hound)         | Claude Code + Codex | Source-hunting research harness: fan-out search → fetch → verify → cite                         |
-| [stack-golem](./stack-golem)       | Claude Code + Codex | Notom-stack ops & debug — Scaleway, observability, local dev                                    |
-| [moon-moth](./moon-moth)           | Claude Code + Codex | Small Moon helper that reports and verifies affected projects                                   |
-| [monkey-maestro](./monkey-maestro) | Claude Code + Codex | Linear-first parallel orchestration with scoped Superset runtime recovery                       |
+| Plugin                             | Runtime             | Purpose                                                                                |
+| ---------------------------------- | ------------------- | -------------------------------------------------------------------------------------- |
+| [subroutine](./subroutine)         | Claude Code + Codex | Ambient TS discipline knowledge skills that activate on matching files                 |
+| [linear-devotee](./linear-devotee) | Claude Code + Codex | Linear intake, planning, creation, and resumable issue delivery through verified merge |
+| [acid-prophet](./acid-prophet)     | Claude Code + Codex | Spec writing, spec audit, and PR/spec drift checks                                     |
+| [git-gremlin](./git-gremlin)       | Claude Code + Codex | Commit, PR, native review, comment resolution, CI and protected merge                  |
+| [lore-hound](./lore-hound)         | Claude Code + Codex | Source-hunting research harness: fan-out search → fetch → verify → cite                |
+| [stack-golem](./stack-golem)       | Claude Code + Codex | Notom-stack ops & debug — Scaleway, observability, local dev                           |
+| [moon-moth](./moon-moth)           | Claude Code + Codex | Small Moon helper that reports and verifies affected projects                          |
+| [monkey-maestro](./monkey-maestro) | Claude Code + Codex | Supervise Linear delivery in isolated Superset issue workspaces with scoped recovery   |
 
 ## Install
 

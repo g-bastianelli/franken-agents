@@ -35,7 +35,8 @@ Create one canonical `<plugin>/skills/<skill>/SKILL.md`; runtime manifests expos
      in `SKILL.md`;
    - add `references/` only for genuinely conditional procedures, schemas, or extended examples;
    - route every reference with an explicit “read when” condition;
-   - use a script when deterministic repeated logic is safer than prose.
+   - choose instructions or executable resources according to the need for judgment,
+     repeatability, and reuse; consider existing tools before introducing code.
 7. Preserve root conventions: unprefixed frontmatter `name`, `../../persona.md` for user-facing
    skills, `genre: contract` for background contracts, and no runtime-specific copies.
 8. Run `bun run check:skills`, `bun run test:meta`, and the narrow plugin tests. Fix generated

@@ -13,38 +13,20 @@ const controlInput = {
   projectId: "project-1",
   runId: "run-1",
   active: true,
+  deliveryScope: "issue-through-merge",
   targetHostId: "host-1",
   supersetProjectId: "superset-project",
+  workspaceGroup: "commerce · 2026-10-09 10:00 utc · run-1",
   defaultAgent: "codex",
-  updatedAt: "2026-08-27T10:00:00.000Z",
+  updatedAt: "2026-10-09T10:00:00.000Z",
 };
 
-function legacyControlBody(overrides = {}) {
-  const record = {
-    marker: "nuthouse:maestro-control",
-    schemaVersion: 1,
-    projectId: "project-1",
-    runId: "run-legacy",
-    active: true,
-    repository: "org/repo",
-    targetHostId: "host-1",
-    supersetProjectId: "superset-project",
-    defaultAgent: "codex",
-    maxConcurrency: 3,
-    revision: 7,
-    updatedAt: "2026-08-27T09:00:00.000Z",
-    decisionBaseline: "malformed and deliberately ignored",
-    decisionHash: 42,
-    graphHash: null,
-    executionIssueIds: { malformed: true },
-    exitedExecutionIssueIds: [null],
-    ...overrides,
-  };
-  return `<!-- nuthouse:maestro-control schema_version=1 -->\n\n\`\`\`json\n${JSON.stringify(record)}\n\`\`\`\n`;
+function envelope(record, version = record.schemaVersion) {
+  return `<!-- nuthouse:maestro-control schema_version=${version} -->\n\n\`\`\`json\n${JSON.stringify(record)}\n\`\`\`\n`;
 }
 
-describe("Maestro control records", () => {
-  test("the resolve-controls CLI selects comments for the exact project", () => {
+describe("Maestro delivery authority", () => {
+  test("the CLI resolves only the exact project's authorized control", () => {
     const script = path.resolve(import.meta.dir, "..", "scripts", "records.mjs");
     const comments = [{ id: "comment-1", body: serializeRecord(buildControlRecord(controlInput)) }];
     const result = Bun.spawnSync({
@@ -59,8 +41,12 @@ describe("Maestro control records", () => {
       ok: true,
       authority: {
         status: "valid",
-        sourceSchemaVersion: 2,
-        control: { schemaVersion: 2, projectId: "project-1" },
+        control: {
+          schemaVersion: 3,
+          projectId: "project-1",
+          deliveryScope: "issue-through-merge",
+          workspaceGroup: controlInput.workspaceGroup,
+        },
       },
     });
     expect(result.stderr.toString()).toBe("");
@@ -69,33 +55,211 @@ describe("Maestro control records", () => {
     ).toMatchObject({ status: "invalid", reason: "CONTROL_PROJECT_MISMATCH" });
   });
 
-  test("writes exactly the minimal v2 control fields", () => {
-    expect(buildControlRecord(controlInput)).toEqual({
-      schemaVersion: 2,
-      projectId: "project-1",
-      runId: "run-1",
-      active: true,
-      targetHostId: "host-1",
-      supersetProjectId: "superset-project",
-      defaultAgent: "codex",
-      maxConcurrency: 4,
-      revision: 1,
-      updatedAt: "2026-08-27T10:00:00.000Z",
+  test("round trips explicit delivery authority without copying runtime or graph state", () => {
+    const record = buildControlRecord(controlInput);
+    expect(record).toEqual({ ...controlInput, schemaVersion: 3, maxConcurrency: 4, revision: 1 });
+    expect(parseControlRecord(serializeRecord(record))).toEqual(record);
+    expect(() => serializeRecord({ ...record, pendingIssues: ["TEAM-1"] })).toThrow(
+      "unsupported fields: pendingIssues",
+    );
+  });
+
+  test("normalizes the workspace group before persisting or comparing a same-run successor", () => {
+    const input = {
+      ...controlInput,
+      workspaceGroup: "  Commerce · 2026-10-09 10:00 UTC · run-1  ",
+    };
+    const existing = buildControlRecord(input);
+    expect(existing.workspaceGroup).toBe(controlInput.workspaceGroup);
+    expect(
+      parseControlRecord(envelope({ ...existing, workspaceGroup: input.workspaceGroup })),
+    ).toEqual(existing);
+    expect(buildControlRecord({ ...input, runId: "  run-1  " }, existing)).toEqual({
+      ...existing,
+      revision: 2,
     });
   });
 
-  test("inherits operational policy and increments revision for stop", () => {
+  test.each([
+    [`  ${"A".repeat(64)}  `, "a".repeat(64)],
+    [`${"A".repeat(62)}İ`, `${"a".repeat(62)}i\u0307`],
+    ["🐵".repeat(32), "🐵".repeat(32)],
+  ])("accepts 64 normalized workspace-tag code units: %p", (workspaceGroup, normalized) => {
+    const record = buildControlRecord({ ...controlInput, workspaceGroup });
+    expect(record.workspaceGroup).toBe(normalized);
+    expect(parseControlRecord(envelope({ ...record, workspaceGroup }))).toEqual(record);
+  });
+
+  test.each(["a".repeat(65), `${"A".repeat(63)}İ`, "🐵".repeat(33)])(
+    "rejects a workspace tag above 64 normalized code units: %p",
+    (workspaceGroup) => {
+      expect(() => buildControlRecord({ ...controlInput, workspaceGroup })).toThrow(
+        "workspaceGroup must be at most 64 characters",
+      );
+      expect(() =>
+        parseControlRecord(envelope({ ...buildControlRecord(controlInput), workspaceGroup })),
+      ).toThrow("workspaceGroup must be at most 64 characters");
+    },
+  );
+
+  test("requires a workspace group on fresh controls and parsed comments", () => {
+    const input = { ...controlInput };
+    delete input.workspaceGroup;
+    expect(() => buildControlRecord(input)).toThrow("workspaceGroup");
+    expect(() =>
+      parseControlRecord(envelope({ ...input, schemaVersion: 3, revision: 1, maxConcurrency: 4 })),
+    ).toThrow("workspaceGroup");
+  });
+
+  test.each([
+    undefined,
+    null,
+    "",
+    "   ",
+    7,
+    {},
+    "first,second",
+    "group\n",
+    "\rgroup",
+    "group\tname",
+    "group\u0000name",
+    "group\u007fname",
+    "group\u0085name",
+  ])("rejects a malformed single workspace tag: %p", (workspaceGroup) => {
+    expect(() => buildControlRecord({ ...controlInput, workspaceGroup })).toThrow("workspaceGroup");
+    expect(() =>
+      parseControlRecord(
+        envelope({
+          ...controlInput,
+          workspaceGroup,
+          schemaVersion: 3,
+          revision: 1,
+          maxConcurrency: 4,
+        }),
+      ),
+    ).toThrow("workspaceGroup");
+  });
+
+  test.each([true, false])("cannot change a run's workspace group with active=%p", (active) => {
+    const existing = buildControlRecord(controlInput);
+    expect(() =>
+      buildControlRecord(
+        { active, workspaceGroup: "Another folder", updatedAt: controlInput.updatedAt },
+        existing,
+      ),
+    ).toThrow("workspaceGroup cannot change within a run");
+  });
+
+  test("a fresh run requires an explicit group separate from the previous run", () => {
+    const existing = buildControlRecord(controlInput);
+    const input = { runId: "run-2", updatedAt: "2026-10-09T11:00:00.000Z" };
+    expect(() => buildControlRecord(input, existing)).toThrow("workspaceGroup");
+    expect(() =>
+      buildControlRecord({ ...input, workspaceGroup: `  ${existing.workspaceGroup}  ` }, existing),
+    ).toThrow("a new run must use a different workspaceGroup");
+    expect(() =>
+      buildControlRecord(
+        { ...input, workspaceGroup: existing.workspaceGroup.toUpperCase() },
+        existing,
+      ),
+    ).toThrow("a new run must use a different workspaceGroup");
+
+    const workspaceGroup = "commerce · 2026-10-09 11:00 utc · run-2";
+    const next = buildControlRecord({ ...input, workspaceGroup }, existing);
+    expect(next).toEqual({ ...existing, ...input, workspaceGroup, revision: 2 });
+    expect(parseControlRecord(serializeRecord(next))).toEqual(next);
+  });
+
+  test.each([undefined, null, "", "dispatch-only", "merge-everything"])(
+    "requires explicit full issue delivery scope: %p",
+    (deliveryScope) => {
+      expect(() => buildControlRecord({ ...controlInput, deliveryScope })).toThrow("deliveryScope");
+    },
+  );
+
+  test.each([1, 2, 4])(
+    "rejects unsupported schema %s without projecting authority",
+    (schemaVersion) => {
+      const record = { ...controlInput, schemaVersion, revision: 7, maxConcurrency: 3 };
+      expect(() => parseControlRecord(envelope(record))).toThrow("unsupported schemaVersion");
+      expect(
+        resolveControlAuthority([{ id: "unsupported", body: envelope(record) }]),
+      ).toMatchObject({
+        status: "invalid",
+        control: null,
+        revision: 7,
+        reason: "UNSUPPORTED_SCHEMA",
+      });
+      expect(() => buildControlRecord({ active: true }, record)).toThrow(
+        "unsupported schemaVersion",
+      );
+    },
+  );
+
+  test("reactivation starts from explicit input above the observed revision", () => {
+    const next = buildControlRecord({ ...controlInput, previousRevision: 7 });
+    expect(next.revision).toBe(8);
+    expect(next).not.toHaveProperty("previousRevision");
+    expect(() =>
+      buildControlRecord({ ...controlInput, deliveryScope: undefined, previousRevision: 7 }),
+    ).toThrow("deliveryScope");
+  });
+
+  test("stop preserves scope, transport, and workspace group while advancing the same run", () => {
     const existing = buildControlRecord({ ...controlInput, maxConcurrency: 10 });
     const next = buildControlRecord(
-      { active: false, updatedAt: "2026-08-27T10:05:00.000Z" },
+      { active: false, updatedAt: "2026-10-09T10:05:00.000Z" },
       existing,
     );
     expect(next).toEqual({
       ...existing,
       active: false,
       revision: 2,
-      updatedAt: "2026-08-27T10:05:00.000Z",
+      updatedAt: "2026-10-09T10:05:00.000Z",
     });
+  });
+
+  test("cannot inherit an existing project's authority into another project", () => {
+    expect(() =>
+      buildControlRecord(
+        { projectId: "another-project", updatedAt: controlInput.updatedAt },
+        buildControlRecord(controlInput),
+      ),
+    ).toThrow("project");
+  });
+
+  test("successor project identity uses the same normalization as a fresh control", () => {
+    const existing = buildControlRecord(controlInput);
+    const input = { ...controlInput, projectId: "  project-1\n" };
+    expect(buildControlRecord(input, existing)).toMatchObject({
+      projectId: buildControlRecord(input).projectId,
+      revision: existing.revision + 1,
+    });
+    expect(() =>
+      buildControlRecord({ ...input, projectId: " another-project " }, existing),
+    ).toThrow("cannot inherit authority into another project");
+  });
+
+  test.each([null, -1, 1.5, Number.MAX_SAFE_INTEGER, "7"])(
+    "rejects unsafe revision base %p",
+    (previousRevision) => {
+      expect(() => buildControlRecord({ ...controlInput, previousRevision })).toThrow(
+        RecordValidationError,
+      );
+    },
+  );
+
+  test("does not let a supplied revision base override the existing record", () => {
+    const existing = buildControlRecord(controlInput);
+    expect(
+      buildControlRecord(
+        { previousRevision: existing.revision, updatedAt: controlInput.updatedAt },
+        existing,
+      ).revision,
+    ).toBe(existing.revision + 1);
+    expect(() =>
+      buildControlRecord({ previousRevision: 99, updatedAt: controlInput.updatedAt }, existing),
+    ).toThrow("previousRevision");
   });
 
   test.each([0, 11, 1.5])("rejects invalid concurrency %s", (maxConcurrency) => {
@@ -105,117 +269,55 @@ describe("Maestro control records", () => {
   });
 
   test.each([undefined, null, "", "   "])(
-    "requires a resolved non-empty default agent: %p",
+    "requires a resolved default agent: %p",
     (defaultAgent) => {
-      const input = { ...controlInput };
-      if (defaultAgent === undefined) delete input.defaultAgent;
-      else input.defaultAgent = defaultAgent;
-      expect(() => buildControlRecord(input)).toThrow("defaultAgent");
+      expect(() => buildControlRecord({ ...controlInput, defaultAgent })).toThrow("defaultAgent");
     },
   );
 
-  test("round trips through a Linear markdown comment", () => {
-    const record = buildControlRecord(controlInput);
-    const body = serializeRecord(record);
-    expect(body).toContain("schema_version=2");
-    expect(parseControlRecord(body)).toEqual(record);
-  });
-
-  test("projects a usable v1 control while ignoring every malformed obsolete field", () => {
-    expect(parseControlRecord(legacyControlBody())).toEqual({
-      schemaVersion: 2,
-      projectId: "project-1",
-      runId: "run-legacy",
-      active: true,
-      targetHostId: "host-1",
-      supersetProjectId: "superset-project",
-      defaultAgent: "codex",
-      maxConcurrency: 3,
-      revision: 7,
-      updatedAt: "2026-08-27T09:00:00.000Z",
-    });
-  });
-
-  test("retains the source schema version beside a projected active control", () => {
-    expect(
-      resolveControlAuthority([{ id: "control-v1", body: legacyControlBody() }]),
-    ).toMatchObject({
-      status: "valid",
-      sourceSchemaVersion: 1,
-      control: {
-        schemaVersion: 2,
-        active: true,
-        revision: 7,
-      },
-    });
-  });
-
-  test("migrates v1 operational fields on the next explicit write", () => {
-    const legacy = parseControlRecord(legacyControlBody());
-    const next = buildControlRecord(
-      { active: false, updatedAt: "2026-08-27T11:00:00.000Z" },
-      legacy,
-    );
-    expect(next).toEqual({
-      ...legacy,
-      schemaVersion: 2,
-      active: false,
-      revision: 8,
-      updatedAt: "2026-08-27T11:00:00.000Z",
-    });
-  });
-
-  test("rejects missing operational v1 fields and obsolete v2 fields", () => {
-    expect(() => parseControlRecord(legacyControlBody({ targetHostId: null }))).toThrow(
-      "targetHostId",
-    );
+  test("rejects mismatched envelope and body versions", () => {
     expect(() =>
-      serializeRecord({ ...buildControlRecord(controlInput), decisionHash: "obsolete" }),
-    ).toThrow("unsupported fields: decisionHash");
+      parseControlRecord(envelope({ ...buildControlRecord(controlInput), schemaVersion: 2 }, 3)),
+    ).toThrow("schema versions differ");
   });
 
-  test("fails closed on unknown or mismatched schema versions", () => {
-    const record = { ...buildControlRecord(controlInput), schemaVersion: 3 };
-    const body = `<!-- nuthouse:maestro-control schema_version=3 -->\n\n\`\`\`json\n${JSON.stringify(record)}\n\`\`\`\n`;
-    expect(() => parseControlRecord(body)).toThrow("unsupported schemaVersion");
-
-    const mismatch = `<!-- nuthouse:maestro-control schema_version=1 -->\n\n\`\`\`json\n${JSON.stringify(buildControlRecord(controlInput))}\n\`\`\`\n`;
-    expect(() => parseControlRecord(mismatch)).toThrow("schema versions differ");
-  });
-
-  test("does not hide a newer invalid control behind an older valid revision", () => {
+  test("a newer invalid control disables the older valid authority", () => {
     const older = buildControlRecord(controlInput);
-    const newer = { ...buildControlRecord(controlInput, older), maxConcurrency: 99 };
-    const newerBody = `<!-- nuthouse:maestro-control schema_version=2 -->\n\n\`\`\`json\n${JSON.stringify(newer)}\n\`\`\`\n`;
-
+    const newer = { ...buildControlRecord(controlInput, older), deliveryScope: "dispatch-only" };
     expect(
       resolveControlAuthority([
         { id: "control-old", body: serializeRecord(older) },
-        { id: "control-new-invalid", body: newerBody },
+        { id: "control-new-invalid", body: envelope(newer) },
       ]),
     ).toMatchObject({
       status: "invalid",
-      code: "CONTROL_INVALID",
       control: null,
       controlCommentId: "control-new-invalid",
       revision: 2,
     });
   });
 
-  test("treats duplicate highest claimed revisions as ambiguous", () => {
+  test("an unorderable control fails closed instead of hiding behind a valid one", () => {
+    expect(
+      resolveControlAuthority([
+        { id: "valid", body: serializeRecord(buildControlRecord(controlInput)) },
+        { id: "broken", body: "<!-- nuthouse:maestro-control schema_version=3 -->\n```json\n{" },
+      ]),
+    ).toMatchObject({ status: "invalid", control: null, revision: null });
+  });
+
+  test("duplicate highest revisions cannot elect a supervisor", () => {
     const control = buildControlRecord(controlInput);
     expect(
       resolveControlAuthority([
         { id: "control-a", body: serializeRecord(control) },
         { id: "control-b", body: serializeRecord({ ...control, runId: "run-2" }) },
       ]),
-    ).toEqual({
+    ).toMatchObject({
       status: "ambiguous",
-      code: "CONTROL_AMBIGUOUS",
       control: null,
-      controlCommentId: null,
-      controlCommentIds: ["control-a", "control-b"],
       revision: 1,
+      controlCommentIds: ["control-a", "control-b"],
     });
   });
 });

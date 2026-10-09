@@ -1,11 +1,13 @@
 const CONTROL_MARKER = "nuthouse:maestro-control";
-const CONTROL_V2_FIELDS = new Set([
+const CONTROL_FIELDS = new Set([
   "schemaVersion",
   "projectId",
   "runId",
   "active",
+  "deliveryScope",
   "targetHostId",
   "supersetProjectId",
+  "workspaceGroup",
   "defaultAgent",
   "maxConcurrency",
   "revision",
@@ -51,7 +53,7 @@ function integer(value, label, minimum, maximum) {
   return value;
 }
 
-function parseEnvelope(body, marker, requireKnownSchema = true) {
+function parseEnvelope(body, marker) {
   if (typeof body !== "string") fail("INVALID_COMMENT", "comment body must be a string");
   const markerText = `<!-- ${marker} schema_version=`;
   const markerIndex = body.indexOf(markerText);
@@ -59,9 +61,6 @@ function parseEnvelope(body, marker, requireKnownSchema = true) {
   const markerEnd = body.indexOf("-->", markerIndex);
   if (markerEnd < 0) fail("INVALID_COMMENT", "unterminated record marker");
   const versionText = body.slice(markerIndex + markerText.length, markerEnd).trim();
-  if (requireKnownSchema && versionText !== "1") {
-    fail("UNSUPPORTED_SCHEMA", `unsupported schemaVersion: ${versionText}`);
-  }
 
   const fenceStart = body.indexOf("```json", markerEnd);
   const jsonStart = fenceStart < 0 ? -1 : body.indexOf("\n", fenceStart);
@@ -90,11 +89,10 @@ export function resolveControlAuthority(comments, { expectedProjectId } = {}) {
       if (!body.includes(`<!-- ${CONTROL_MARKER}`)) return null;
       const id = string(value.id, `comments[${index}].id`);
       try {
-        const envelope = parseEnvelope(body, CONTROL_MARKER, false);
+        const envelope = parseEnvelope(body, CONTROL_MARKER);
         return {
           id,
           body,
-          sourceSchemaVersion: Number(envelope.versionText),
           revision: integer(
             envelope.record?.revision,
             `comments[${index}].revision`,
@@ -155,7 +153,6 @@ export function resolveControlAuthority(comments, { expectedProjectId } = {}) {
       status: "valid",
       control,
       controlCommentId: candidate.id,
-      sourceSchemaVersion: candidate.sourceSchemaVersion,
       revision: highestRevision,
     };
   } catch (error) {
@@ -173,53 +170,86 @@ export function resolveControlAuthority(comments, { expectedProjectId } = {}) {
 export function buildControlRecord(input, existing) {
   const value = object(input, "control input");
   const previous = existing === undefined ? undefined : validateControlRecord(existing);
+  const previousRevision = integer(
+    Object.hasOwn(value, "previousRevision") ? value.previousRevision : (previous?.revision ?? 0),
+    "previousRevision",
+    0,
+    Number.MAX_SAFE_INTEGER - 1,
+  );
+  if (previous && previousRevision !== previous.revision) {
+    fail("INVALID_RECORD", "previousRevision must match the existing control");
+  }
 
   const inherited = (field, fallback) => {
     if (Object.hasOwn(value, field)) return value[field];
     if (previous !== undefined) return previous[field];
     return fallback;
   };
+  const runId = string(inherited("runId"), "runId");
+  const sameRun = previous?.runId === runId;
+  if (previous && !sameRun && !Object.hasOwn(value, "workspaceGroup")) {
+    fail("INVALID_RECORD", "a new run requires an explicit workspaceGroup");
+  }
 
-  return validateControlRecord({
-    schemaVersion: 2,
+  const record = validateControlRecord({
+    schemaVersion: 3,
     projectId: inherited("projectId"),
-    runId: inherited("runId"),
+    runId,
     active: inherited("active"),
+    deliveryScope: inherited("deliveryScope"),
     targetHostId: inherited("targetHostId"),
     supersetProjectId: inherited("supersetProjectId"),
+    workspaceGroup: inherited("workspaceGroup"),
     defaultAgent: inherited("defaultAgent"),
     maxConcurrency: inherited("maxConcurrency", 4),
-    revision: (previous?.revision ?? 0) + 1,
+    revision: previousRevision + 1,
     updatedAt: value.updatedAt,
   });
+  if (previous && record.projectId !== previous.projectId) {
+    fail("CONTROL_PROJECT_MISMATCH", "cannot inherit authority into another project");
+  }
+  if (previous && sameRun && record.workspaceGroup !== previous.workspaceGroup) {
+    fail("INVALID_RECORD", "workspaceGroup cannot change within a run");
+  }
+  if (previous && !sameRun && record.workspaceGroup === previous.workspaceGroup) {
+    fail("INVALID_RECORD", "a new run must use a different workspaceGroup");
+  }
+  return record;
 }
 
 export function validateControlRecord(value) {
   const record = object(value, "record");
-  if (record.marker !== undefined && record.marker !== CONTROL_MARKER) {
-    fail("MARKER_MISMATCH", `expected marker ${CONTROL_MARKER}`);
-  }
-  if (record.schemaVersion !== 1 && record.schemaVersion !== 2) {
+  if (record.schemaVersion !== 3) {
     fail("UNSUPPORTED_SCHEMA", `unsupported schemaVersion: ${String(record.schemaVersion)}`);
   }
-  if (record.schemaVersion === 2) {
-    const unexpected = Object.keys(record)
-      .filter((field) => field !== "marker" && !CONTROL_V2_FIELDS.has(field))
-      .sort();
-    if (unexpected.length > 0) {
-      fail("INVALID_RECORD", `control v2 contains unsupported fields: ${unexpected.join(", ")}`, {
-        fields: unexpected,
-      });
-    }
+  const unexpected = Object.keys(record)
+    .filter((field) => !CONTROL_FIELDS.has(field))
+    .sort();
+  if (unexpected.length > 0) {
+    fail("INVALID_RECORD", `control contains unsupported fields: ${unexpected.join(", ")}`, {
+      fields: unexpected,
+    });
   }
   if (typeof record.active !== "boolean") fail("INVALID_RECORD", "active must be boolean");
+  if (record.deliveryScope !== "issue-through-merge") {
+    fail("INVALID_RECORD", "deliveryScope must explicitly be issue-through-merge");
+  }
+  const workspaceGroup = string(record.workspaceGroup, "workspaceGroup").toLowerCase();
+  if (workspaceGroup.length > 64) {
+    fail("INVALID_RECORD", "workspaceGroup must be at most 64 characters after normalization");
+  }
+  if (/[,\p{Cc}]/u.test(record.workspaceGroup)) {
+    fail("INVALID_RECORD", "workspaceGroup must be one tag without commas or control characters");
+  }
   return {
-    schemaVersion: 2,
+    schemaVersion: 3,
     projectId: string(record.projectId, "projectId"),
     runId: string(record.runId, "runId"),
     active: record.active,
+    deliveryScope: record.deliveryScope,
     targetHostId: string(record.targetHostId, "targetHostId"),
     supersetProjectId: string(record.supersetProjectId, "supersetProjectId"),
+    workspaceGroup,
     defaultAgent: string(record.defaultAgent, "defaultAgent"),
     maxConcurrency: integer(record.maxConcurrency, "maxConcurrency", 1, 10),
     revision: integer(record.revision, "revision", 1, Number.MAX_SAFE_INTEGER),
@@ -233,8 +263,8 @@ export function serializeRecord(value) {
 }
 
 export function parseControlRecord(body) {
-  const envelope = parseEnvelope(body, CONTROL_MARKER, false);
-  if (envelope.versionText !== "1" && envelope.versionText !== "2") {
+  const envelope = parseEnvelope(body, CONTROL_MARKER);
+  if (envelope.versionText !== "3") {
     fail("UNSUPPORTED_SCHEMA", `unsupported schemaVersion: ${envelope.versionText}`);
   }
   if (String(envelope.record?.schemaVersion) !== envelope.versionText) {

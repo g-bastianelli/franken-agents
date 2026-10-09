@@ -78,7 +78,7 @@ if (issue) {
     JSON.stringify({
       hookSpecificOutput: {
         hookEventName: "SessionStart",
-        additionalContext: `<EXTREMELY-IMPORTANT>linear-devotee detected Linear issue ${issue} on the current branch. Invoke the \`linear-devotee:greet\` skill BEFORE doing anything else (including answering or running other tools).</EXTREMELY-IMPORTANT>`,
+        additionalContext: `linear-devotee detected Linear issue ${issue} on the current branch. Follow the user's explicit workflow and scope first. Full delivery belongs to \`linear-devotee:deliver\`, which loads its own context; do not prepend greet. Otherwise use \`linear-devotee:greet\` once for fresh issue context when relevant. A branch id alone does not authorize implementation or merge.`,
       },
     }),
   );

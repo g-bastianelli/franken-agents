@@ -20,6 +20,10 @@ Read `../../persona.md`; it is canonical for this skill's user-facing output, an
 
 ## Fresh-session trigger
 
+When `linear-devotee:deliver` or another explicit workflow owns the current request, yield to
+that owner without fetching, changing status, or chaining. Full delivery loads its own context;
+prepending a fresh-session greeting would compete with its recovery logic.
+
 Accept an issue only from explicit arguments, the current branch on fresh startup, or the user's
 current first prompt. A resumed/compacted conversation, injected summary, or earlier turn is not
 a fresh trigger. If an issue brief is already available, or session state says `greeted: true`,
@@ -58,9 +62,8 @@ network updates are not a prerequisite for a brief.
 ## Move the issue to In Progress
 
 For authorized delivery, read
-[`references/started-transition.md`](references/started-transition.md) and complete its
-verified transition before handoff. `greet` is the sole owner of this state change; a
-read-only brief never changes status.
+[`../../shared/issue-lifecycle.md`](../../shared/issue-lifecycle.md) and complete its
+started transition before handoff. A read-only brief never changes status.
 
 ## Retain useful context
 

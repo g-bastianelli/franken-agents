@@ -14,12 +14,21 @@ Issue mode starts from one exact Linear issue identifier. Before dispatch, read
    returns, including its marker comments. Capacity, readiness, and the control stay outside manual
    spawn. Missing project evidence makes the sibling set unknown but does not itself refuse
    dispatch.
-4. Resolve `superset tasks get <issueId> --json` and require its exact Linear issue and project
-   binding. Bind the workspace with `--task <taskId>`. Render the workspace name from the uppercase
+4. Resolve the task with explicit `--tracker linear` using **Exact tracker binding** from
+   the shared contract. Require its exact Linear issue and project binding. Set
+   `bindingArgs = --task <rawLinearIssueUuid> --branch '<verifiedLinearBranch>'
+--skip-branch-prefix --base-branch '<verifiedBaseBranch>'`. Resolve the base from
+   repository instructions, not an assumed `main`; the explicit branch avoids depending
+   on the host's different provider-task lookup. Render the workspace name from the uppercase
    issue identifier and the title; the name is never its identity.
-5. The worker prompt starts with `linear-devotee:greet <issueId>` and preserves title, branch, and
-   description verbatim. Extract scope, Acceptance, and checks only when the description states
+5. Full delivery starts with `linear-devotee:deliver <issueId>` and the exact caller scope,
+   issue/project/workspace, and control run/revision when supplied by a supervisor. Limited
+   draft-PR delivery starts with `linear-devotee:greet <issueId>` and explicitly excludes
+   merge/completed status authority. Preserve title, branch, and description verbatim.
+   Extract scope, Acceptance, and checks only when the description states
    them; otherwise use `not specified in Linear` and never infer the missing content. Apply
-   **Concurrent siblings** from the shared contract to the proven sibling identifiers.
+   **Concurrent siblings** and **Worker boundary** from the shared contract to the proven
+   sibling identifiers. Full delivery uses its done/waiting/blocked envelope. Started
+   recovery continues the existing workspace/PR and does not repeat a status transition.
 6. For an unknown launch outcome, direct the user to read-only
    `monkey-maestro:reconcile <projectId> <issueId>`.
