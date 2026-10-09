@@ -8,8 +8,7 @@ paths: ["**/*.ts", "**/*.tsx"]
 
 # subroutine — code-organisation discipline
 
-For every TypeScript module; read the nearest `AGENTS.md` first. Where the repo
-lint enforces a rule below, fix its diagnostic; never disable the rule.
+For every TypeScript module; read the nearest `AGENTS.md` first.
 
 ## Shape modules around responsibilities
 
