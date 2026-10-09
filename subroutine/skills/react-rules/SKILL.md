@@ -21,8 +21,8 @@ and tests take precedence.
    cache. Collection owners render one child per item; pass the item if ID
    lookup is costly (large unkeyed lists). Lists only go to design-system,
    virtualized, or constant-list components.
-4. Each repeated level of rendered JSX is a child component (lint rejects a
-   nested `.map`).
+4. In rendered JSX, never nest a `.map` inside a `.map`; each repeated level is
+   a child component.
 5. Match a discriminated union once, exhaustively. An arm rendering more than a
    few elements is a component; the derivation returns every state the UI
    branches on; a guard that cannot fail means the variant lacks that field.

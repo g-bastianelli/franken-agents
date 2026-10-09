@@ -8,11 +8,14 @@ paths: ["**/*.ts", "**/*.tsx"]
 
 # subroutine — code-organisation discipline
 
-For every TypeScript module; read the nearest `AGENTS.md` first.
+For every TypeScript module; read the nearest `AGENTS.md` first. Where the repo
+lint enforces a rule below, fix its diagnostic; never disable the rule.
 
 ## Shape modules around responsibilities
 
-- One responsibility per file, named specifically (`partition.ts`).
+- Use named exports. Allow a default export only when a tool config requires it.
+- One responsibility per file, named specifically (`partition.ts`), never
+  a `utils.ts`/`helpers.ts` dumping ground.
 - Group multiple resources into owner folders; colocate tests and private support.
 
 ```text
@@ -25,8 +28,10 @@ orders/
 
 ## Keep entry points declarative
 
-An `index.ts` composes or re-exports (`export { createOrdersService } from
-"./service.js";`); business logic that deserves a name gets its own file.
+Keep `index.ts` to declarative composition or named re-exports, for example
+`export { createOrdersService } from "./service.js";`.
+
+Move branching, loops, I/O, side effects, and business logic into named files.
 Declare a library's public subpaths in `package.json#exports`; do not create a
 barrel that exposes every internal module.
 
@@ -47,9 +52,7 @@ barrel that exposes every internal module.
 
 ## Check the settled folder
 
-After structural edits, before verification/completion, run the repository lint
-(`oxlint-plugin-code-rules` reports placement, façades, catch-all names and a
-non-declarative `index.ts`), then review the settled tree and unchanged siblings
-for what it cannot decide.
+After structural edits, before verification/completion, review the settled tree
+and unchanged siblings.
 
 **REQUIRED SUB-SKILL:** Use `subroutine:check-folder-shape`

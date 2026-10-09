@@ -103,10 +103,8 @@ shape checkpoint.
 
 Prefer IDs and display primitives over domain objects across component
 boundaries. The component that owns a collection maps it and renders one child
-per item. Rendered JSX never contains a `.map` inside another `.map`: each
-repeated level becomes a child component. Transforming data with nested `.map`
-outside JSX is fine. A domain component does not receive an array only to
-iterate over it.
+per item. Transforming data with nested `.map` outside JSX is fine. A domain
+component does not receive an array only to iterate over it.
 
 Pass the child an ID when it can find its item cheaply: a per-ID query, a cache
 keyed by ID, or a small loaded list. Otherwise pass the item itself, never the

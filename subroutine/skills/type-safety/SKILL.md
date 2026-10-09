@@ -13,10 +13,10 @@ repo wins when it defines a stricter or different convention.
 
 ## Prove types; do not silence the checker
 
-- Narrow `unknown`, parse structured external data with the repo's schema
-  library, and handle absence explicitly; `any`, `as T` and `!` are lint errors.
-- Do not disable a type rule to get past a difficult type: it usually exposes a
-  missing boundary or an imprecise model.
+- Never use `any`, `as T`, or non-null `!`. Narrow `unknown`, parse structured
+  external data with the repo's schema library, and handle absence explicitly.
+- Do not add lint disables to bypass these rules. A difficult type usually
+  exposes a missing boundary or an imprecise model.
 - `as const` is allowed for literals. Use `satisfies` when checking an object's
   shape without widening its inferred values.
 
@@ -40,6 +40,7 @@ return ok(first);
 
 ## Model finite states explicitly
 
+- Prefer string-literal unions to TypeScript `enum`.
 - Expose named value sets as object-as-const when callers need symbolic access.
 - Match discriminated unions with more than two variants using `ts-pattern`
   `.exhaustive()`.
