@@ -58,6 +58,9 @@ preparation too; an earlier review is stale after another structural edit.
    above the Git root. Read the complete resulting tree and relevant source,
    including unchanged siblings. Apply `../code-organisation/SKILL.md` and, for
    React owners, `../react-rules/SKILL.md` against those local conventions.
+   Where the repo lint checks structure (`oxlint-plugin-code-rules`: placement,
+   façades, catch-all names, non-declarative `index.ts`), run it first and judge
+   only what it cannot decide.
    - **Cohesion:** identify parent components/workflows and their private forms,
      components, hooks, logic and tests. Read importers and render/composition
      sites to determine ownership. A cohesive workflow belongs under its owner;
@@ -85,9 +88,10 @@ preparation too; an earlier review is stale after another structural edit.
 4. **Resolve and recheck.** Within the authorized task, correct structural drift,
    update imports and preserve behavior. If ownership is ambiguous, name the
    alternatives and the missing evidence instead of moving files speculatively.
-   After any correction, rerun the inventory with the same base and revisit
-   affected owners and consumers. The checkpoint precedes the repo's normal
-   typecheck/lint/tests; return to that verification flow after the final move.
+   After any correction, rerun the inventory with the same base and that lint
+   (moving an owner relocates its children), then revisit affected owners and
+   consumers. The checkpoint precedes the repo's normal typecheck/lint/tests;
+   return to that verification flow after the final move.
 
 ## Final Report
 

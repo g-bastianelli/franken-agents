@@ -15,8 +15,8 @@ repo wins when it defines a stricter or different convention.
 
 - Never use `any`, `as T`, or non-null `!`. Narrow `unknown`, parse structured
   external data with the repo's schema library, and handle absence explicitly.
-- Do not add lint disables to bypass these rules. A difficult type usually
-  exposes a missing boundary or an imprecise model.
+- Never add a lint disable to bypass a rule. A difficult type usually exposes
+  a missing boundary or an imprecise model.
 - `as const` is allowed for literals. Use `satisfies` when checking an object's
   shape without widening its inferred values.
 
