@@ -82,9 +82,16 @@ change permission modes or accept a permission prompt automatically to keep deli
 4. **Observe readiness.** Once native findings are addressed and local verification is current,
    mark an owned draft ready if authorized. For an open PR, read
    [references/github-readiness.md](references/github-readiness.md) and use its direct `gh`
-   observations. Inspect the current head/base, CI, required review decision, every unresolved
-   thread, latest opinionated reviews, and GitHub merge restrictions. Compare head/base before
-   and after fetching pages; changed or partial evidence requires a fresh read.
+   observations. Inspect the current head/base, CI, expected external reviews, required review
+   decision, every unresolved thread, latest opinionated reviews, and GitHub merge restrictions.
+   Compare head/base before and after fetching pages; changed or partial evidence requires a
+   fresh read.
+
+   Require explicit completion evidence for each expected external reviewer on the current head,
+   independently of CI buckets and approval requirements. A green draft-skipped CodeRabbit check
+   does not satisfy this gate. Missing, pending, skipped, stale, or ambiguous review evidence
+   keeps the PR waiting. After external review completes, reload its findings and all threads;
+   return to repair and verification when needed, then refresh readiness for the resulting head.
 
    All reported CI must be successful or completed conditional skips, with at least one
    successful check. No CI, unavailable evidence, unknown mergeability, missing required
@@ -93,9 +100,10 @@ change permission modes or accept a permission prompt automatically to keep deli
    no CI needs an explicit verification-policy decision; do not silently waive the user's CI gate.
 
 5. **Request the protected merge.** Immediately before merging, confirm a clean relevant worktree,
-   local/remote head equality, the reviewed base, fresh GitHub readiness, completed review
-   findings, and the repository's permitted merge method. Follow its configured method; use the
-   sole allowed method when unambiguous. If a merge queue is required, use its native queue path.
+   local/remote head equality, the reviewed base, fresh GitHub readiness, completed native and
+   expected external reviews with addressed findings, and the repository's permitted merge
+   method. Follow its configured method; use the sole allowed method when unambiguous. If a merge
+   queue is required, use its native queue path.
 
    ```text
    gh pr merge <PR-URL> --match-head-commit <expected-head-oid> <permitted-method-flag>
@@ -116,9 +124,9 @@ change permission modes or accept a permission prompt automatically to keep deli
 
 Keep moving while scoped repairs make observable progress. Two consecutive repair/review passes
 that leave the same blocker unchanged return `blocked` with the attempted fixes and the smallest
-decision needed. For external checks, approval, or queue progress, refresh after a relevant event
-or a short wait; after three unchanged observations return `waiting` with the next observation
-needed. Missing external approval is not a reason to ask the user to repeat merge authorization.
+decision needed. For external reviews, checks, approval, or queue progress, refresh after a
+relevant event or a short wait; after three unchanged observations return `waiting` with the next
+observation needed. Missing external approval is not a reason to ask the user to repeat merge authorization.
 
 When a caller owns a compaction ledger, add only the PR, latest observed head/base, completed
 review/check summary, current reason/question, and next action there. Otherwise create a disposable
@@ -141,7 +149,7 @@ git-gremlin:finish-pr report
   Outcome:      merged | waiting | blocked
   PR:           <url>
   Head:         <latest observed head OID>
-  Review:       <runtime, reviewed head/base, finding dispositions>
+  Review:       <runtime, reviewed head/base, expected external-review completion evidence, finding dispositions>
   Verification: <local checks and current GitHub evidence>
   Merge:        <mergedAt + merge commit, queue/open state, or not requested>
   Next:         <specific observation/action, or one question with context>
