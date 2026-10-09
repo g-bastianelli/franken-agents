@@ -22,7 +22,9 @@ Read `../../persona.md`; it is canonical for this skill's user-facing output, an
 ## Establish the deliverable
 
 1. Resolve the repository and issue from the request, current context, or branch. Read repository
-   instructions. Ask for an issue id only when none is unambiguous.
+   instructions. Ask for an issue id only when none is unambiguous. Preserve an explicit
+   `linear-devotee:deliver` caller, its scoped authority, and any existing PR as the return
+   context; planning does not take over its merge or lifecycle responsibilities.
 2. Reuse a current issue brief or `${CLAUDE_PLUGIN_DATA}/greet-<ISSUE_ID>.json` when it belongs to
    this issue and repository. `--fresh`, changed decisions, stale context, or missing Acceptance
    calls for `linear-devotee:issue-context`. Request full active criteria and decision sources;
@@ -54,4 +56,6 @@ Read [`references/review-and-handoff.md`](references/review-and-handoff.md), the
 one risk-proportionate review, resolve supported findings, validate only clean authorized
 artifacts, and emit the delivery packet. The planning phase never implements, mutates
 Linear, commits, pushes, or rebases. A requested implementation that follows it is delivered
-as a draft PR through Git Gremlin, as the reference describes.
+as a draft PR through Git Gremlin, as the reference describes. With a `deliver` caller, return
+the resulting or reused PR to that caller for finishing; standalone planning does not authorize
+merge or Linear completion.

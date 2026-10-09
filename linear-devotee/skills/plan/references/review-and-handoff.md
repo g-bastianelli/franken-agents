@@ -54,9 +54,22 @@ Deliver only from a feature branch: on the base branch or a detached `HEAD`, rep
 uncommitted and stop. Pass `git-gremlin:commit` the exact paths the implementation created,
 changed, or deleted, never "all changes", so unrelated work in the tree stays out.
 
-**REQUIRED SUB-SKILL:** Use `git-gremlin:commit`, then `git-gremlin:pr` (the PR opens as a draft).
+**REQUIRED SUB-SKILL:** Use `git-gremlin:commit` for missing verified implementation changes.
+
+When `linear-devotee:deliver` supplied an existing matching PR, commit only missing authorized
+changes and return its URL, branch, local head, and verification to that caller instead of
+invoking `pr` again. Its `finish-pr` handoff publishes the scoped commits and verifies the
+remote head before review. If no commit is missing, reuse the existing commit. This avoids a
+second PR or duplicate publication during recovery.
+
+Otherwise continue the authorized implementation handoff with a draft PR.
+
+**REQUIRED SUB-SKILL:** Use `git-gremlin:pr` when no matching PR was supplied by `deliver`.
 
 If Git Gremlin is unavailable, report the work as uncommitted instead of delivering it by hand.
 
 Report the issue, plan version/path, source and project plan, audit result, and
 `implementation_ready | blocked | stopped`, plus the draft PR URL when implementation ran.
+With a `deliver` caller, return control and evidence there; an open draft is an intermediate
+result, not completed full delivery. Without that caller, stop at this requested handoff and
+do not add review, merge, or Linear completion authority.

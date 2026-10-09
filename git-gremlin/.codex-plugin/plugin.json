@@ -1,7 +1,7 @@
 {
   "name": "git-gremlin",
   "version": "1.0.26",
-  "description": "Git commit, review-comment discipline, and GitHub PR helper for Codex with stronger automatic skill triggers and scoped mutation gates.",
+  "description": "Scoped commits, draft PRs, and full PR completion through native review, corrections, CI, and protected merge for Codex.",
   "author": {
     "name": "g-bastianelli"
   },
@@ -9,8 +9,8 @@
   "skills": "./skills/",
   "interface": {
     "displayName": "Git Gremlin",
-    "shortDescription": "Prepare commits, handle review comments, and publish PR branches safely",
-    "longDescription": "Git Gremlin bundles Codex skills for recognizing commit and GitHub PR intent from natural prompts, drafting conventional commit messages and PR descriptions from git context, staging dirty changes when an actual commit needs them, publishing local branches as draft PRs after the PR confirmation gate (or a chaining workflow's authorization), and keeping review-comment replies honest.",
+    "shortDescription": "Commit, publish draft PRs, and finish authorized PR delivery",
+    "longDescription": "Git Gremlin drafts commits and PRs from Git context, preserves scoped mutation authority, and completes existing PRs through native review, supported fixes, local checks, review comments, CI, and protected merge. It reuses existing PRs on resume, keeps replies behind published fixes, and confirms actual merge before reporting completion.",
     "developerName": "g-bastianelli",
     "category": "Developer Tools",
     "capabilities": ["Read", "Write"],
@@ -18,7 +18,8 @@
     "defaultPrompt": [
       "Use Git Gremlin to commit my changes.",
       "Use Git Gremlin to open a GitHub PR for this branch.",
-      "Use Git Gremlin to handle the review comments on this PR."
+      "Use Git Gremlin to handle the review comments on this PR.",
+      "Use Git Gremlin to finish this PR through review, corrections, CI, and merge."
     ],
     "logo": "./assets/banner.png"
   }

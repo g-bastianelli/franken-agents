@@ -110,6 +110,37 @@ test("detects identifier in first prompt and outputs additionalContext", () => {
   expectRootDataUnused();
 });
 
+for (const runtime of ["claude", "codex"]) {
+  test(`${runtime} explicit delivery keeps context without injecting a competing greet`, () => {
+    writeStateFile("sess-deliver", {
+      greeted: false,
+      awaiting_prompt: true,
+      issue: null,
+      source: null,
+      current_branch: "main",
+      needs_branch: true,
+    });
+    const res = runHook(
+      {
+        session_id: "sess-deliver",
+        prompt: "Use linear-devotee:deliver ENG-42 through merge in this workspace.",
+      },
+      runtime === "codex" ? { PLUGIN_ROOT: tmpRoot, PLUGIN_DATA: tmpData } : {},
+      runtime === "codex" ? { deleteEnv: ["CLAUDE_PLUGIN_ROOT", "CLAUDE_PLUGIN_DATA"] } : {},
+    );
+
+    expect(res.status).toBe(0);
+    expect(res.stdout).toBe("");
+    const state = JSON.parse(
+      fs.readFileSync(path.join(tmpData, "state-sess-deliver.json"), "utf8"),
+    );
+    expect(state.issue).toBe("ENG-42");
+    expect(state.awaiting_prompt).toBe(false);
+    expect(state.greeted).toBe(false);
+    expectRootDataUnused();
+  });
+}
+
 test("first prompt without identifier closes greet detection on a default branch", () => {
   writeStateFile("sess-3", {
     greeted: false,

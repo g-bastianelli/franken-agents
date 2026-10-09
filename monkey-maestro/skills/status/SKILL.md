@@ -29,7 +29,8 @@ status, or relations.
    the whole project snapshot unavailable rather than partial.
 2. Pass the complete marker-bearing control comments through
    `scripts/records.mjs resolve-controls`. Treat an unavailable or conflicting latest
-   control as unusable; do not guess.
+   control as unusable; do not guess. Read the run group only from a usable control;
+   report it as unavailable when missing or invalid, without inspecting Superset.
 3. Classify the live issues directly:
    - terminal: `completed` or `canceled`;
    - started: every known `started` row;
@@ -46,8 +47,11 @@ status, or relations.
 monkey-maestro:status report
   Project:   <id / name>
   Control:   active | inactive | not-configured | unusable
+  Scope:     issue-through-merge | unavailable
+  Group:     <stored workspaceGroup | unavailable; placement not inspected>
   Linear:    started <n> · ready <n> · blocked <n> · terminal <n> · unknown <n>
   Capacity:  <remaining> of <maxConcurrency>
   Superset:  not inspected
+  Session:   supervision not inferred from active control
   Next:      orchestrate | start | idle | repair control
 ```

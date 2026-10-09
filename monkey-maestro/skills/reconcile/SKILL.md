@@ -3,7 +3,7 @@ name: reconcile
 description: Use when the user explicitly asks Monkey Maestro to inspect Superset transport for a project. Produces an optional read-only issue/runtime correlation report and never repairs or gates scheduling.
 argument-hint: "<linear-project-id> [ISSUE...]"
 effort: medium
-allowed-tools: Read, Bash(node:*), Bash(superset tasks get:*), Bash(superset workspaces list:*), Bash(superset terminals list:*), Agent
+allowed-tools: Read, Bash(node:*), Bash(superset tasks get:*), Bash(superset tasks list:*), Bash(superset workspaces list:*), Bash(superset terminals list:*), Bash(superset agents read:*), Agent
 ---
 
 # reconcile
@@ -30,9 +30,12 @@ dispatches work, calls GitHub, or blocks another skill.
    of current known `started` issues. Exclude terminal issues before Superset inspection.
 3. If the usable control does not provide host and Superset project, report the scope as
    non-auditable. If the issue scope is empty, return a successful no-op.
-4. Read each exact Superset task, then list workspaces once for the configured project and
+4. Read each exact task with explicit `--tracker linear` using **Exact tracker binding**,
+   then list workspaces once for the configured project and
    terminals only for matching workspaces. Treat the results only as current transport
-   observations.
+   observations. Read the matched provider transcript with `superset agents read` when
+   terminal presence alone cannot establish whether an uncertain launch started. Never
+   infer semantic completion from a missing or idle terminal.
 5. Report task, workspace, terminal, ambiguity, and unavailable evidence per issue. Do
    not create, update, delete, adopt, repair, retry, or write any resource or comment.
 

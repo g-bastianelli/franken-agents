@@ -4,6 +4,9 @@
 
 Accepted (2026-09-24).
 
+Amended (2026-10-09): choose executable resources by task need; scripts are optional,
+neither mandatory nor prohibited.
+
 Supersedes ADR 0007 only for skill-entrypoint size, progressive disclosure, and
 guardrail writing style. ADR 0007's prose-orchestration decision remains accepted.
 
@@ -22,8 +25,8 @@ The skill guidance from
 [OpenAI](https://developers.openai.com/plugins/build/skills),
 [Anthropic](https://platform.claude.com/docs/en/agents-and-tools/agent-skills/best-practices),
 and [Agent Skills](https://agentskills.io/skill-creation/best-practices) converges on the
-same operational model: concise discovery metadata, a focused entrypoint, conditional
-supporting material, and executable helpers for repeated deterministic work.
+same operational model: concise discovery metadata, a focused entrypoint, and conditional
+supporting material. Executable helpers are optional; they are not the default for skills.
 
 The repository refactor inspected all 45 entrypoints, changed 35, and reduced entrypoint
 content to 2,989 lines. Thirty-seven directly routed references now hold 1,278 lines of
@@ -48,8 +51,10 @@ repository test and invariant suite passed after the change.
    `SKILL.md` with an explicit condition describing when to read it.
 4. Do not create a reference for material every invocation immediately needs, and do not
    split a short cohesive skill merely to reduce its line count.
-5. Move deterministic repeated logic to `scripts/` and enforce mechanically checkable
-   structure in code rather than prose.
+5. Match the implementation to the required degree of freedom: instructions for contextual
+   decisions, executable resources when repeatability or reuse warrants them. Consider
+   existing runtime, CLI, and MCP capabilities and the maintenance cost of new code.
+   Validate skill structure with the repository's existing checks.
 6. Treat 500 lines as a hard review threshold for an entrypoint, not a target or a reason
    by itself to split a skill. Context relevance is the primary measure.
 7. Use absolute language and `| Excuse | Reality |` tables only for evidenced safety,
@@ -60,6 +65,26 @@ repository test and invariant suite passed after the change.
 `bun run check:skills` enforces the mechanical subset: entrypoint size, direct
 reference existence, one-level reference placement, orphan prevention, and navigation
 for long references. Behavioral quality remains a source-based review.
+
+## Implementation references
+
+The October amendment follows the current primary sources, without treating any one
+repository as a universal architecture:
+
+- [OpenAI's skill creator](https://github.com/openai/skills/blob/main/skills/.system/skill-creator/SKILL.md)
+  selects the degree of freedom by task variability and fragility. Scripts can serve
+  deterministic reliability or repeatedly rewritten code; they are optional resources.
+- [Anthropic's skill creator](https://github.com/anthropics/skills/blob/main/skills/skill-creator/SKILL.md)
+  combines instructions and optional executable resources, and evaluates revisions
+  against a baseline using real task outcomes.
+- [Anthropic's commit/push/PR command](https://github.com/anthropics/claude-plugins-official/blob/main/plugins/commit-commands/commands/commit-push-pr.md)
+  demonstrates direct Git and GitHub CLI orchestration in Markdown.
+- [Superpowers' subagent workflow](https://github.com/obra/superpowers/blob/main/skills/subagent-driven-development/SKILL.md)
+  demonstrates task-scoped context and bounded review loops. Its delegation restrictions
+  are specific to that workflow, not a requirement for other plugins.
+
+Considering existing capabilities and maintenance cost is our application of these
+examples. It is not a vendor requirement to prefer or prohibit scripts universally.
 
 ## Consequences
 
